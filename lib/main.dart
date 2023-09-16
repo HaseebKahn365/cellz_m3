@@ -1,3 +1,6 @@
+// ignore_for_file: prefer_const_constructors
+
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 
 import 'home.dart';
@@ -25,7 +28,7 @@ const List<Color> colorOptions = [
   Colors.blue,
   Colors.teal,
   Colors.green,
-  Colors.yellow,
+  Colors.amber,
   Colors.orange,
   Colors.pink
 ];
@@ -60,9 +63,11 @@ class _CellzM3State extends State<CellzM3> {
         brightness: useLightMode ? Brightness.light : Brightness.dark);
   }
 
+  var openedScreen;
   void handleScreenChanged(int selectedScreen) {
     setState(() {
       screenIndex = selectedScreen;
+      openedScreen = selectedScreen;
     });
   }
 
@@ -103,51 +108,298 @@ class _CellzM3State extends State<CellzM3> {
 
   PreferredSizeWidget createAppBar() {
     return AppBar(
-      title: useMaterial3 ? const Text("Material 3") : const Text("Material 2"),
-      actions: [
-        IconButton(
-          icon: useLightMode ? const Icon(Icons.wb_sunny_outlined) : const Icon(Icons.wb_sunny),
-          onPressed: handleBrightnessChange,
-          tooltip: "Toggle brightness",
-        ),
-        PopupMenuButton(
-          icon: const Icon(Icons.more_vert),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          itemBuilder: (context) {
-            return List.generate(colorOptions.length, (index) {
-              return PopupMenuItem(
-                  value: index,
-                  child: Wrap(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: Icon(
-                          index == colorSelected ? Icons.color_lens : Icons.color_lens_outlined,
-                          color: colorOptions[index],
-                        ),
-                      ),
-                      Padding(padding: const EdgeInsets.only(left: 20), child: Text(colorText[index]))
-                    ],
-                  ));
-            });
-          },
-          onSelected: handleColorSelect,
-        ),
-      ],
+      title: appBarText(),
     );
+  }
+
+  Text? appBarText() {
+    if (openedScreen == 0) {
+      return const Text(
+        'Home',
+        style: TextStyle(fontSize: 20),
+      );
+    } else if (openedScreen == 1) {
+      return const Text(
+        'Journey',
+        style: TextStyle(fontSize: 20),
+      );
+    } else if (openedScreen == 2) {
+      return const Text(
+        'Patrios',
+        style: TextStyle(fontSize: 20),
+      );
+    } else {
+      return const Text(
+        'Home',
+        style: TextStyle(fontSize: 20),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Material 3',
+      title: 'Cellz',
       themeMode: useLightMode ? ThemeMode.light : ThemeMode.dark,
       theme: themeData,
       home: LayoutBuilder(builder: (context, constraints) {
         if (constraints.maxWidth < narrowScreenWidthThreshold) {
           return Scaffold(
             appBar: createAppBar(),
+            //create a drawer for the app bar that contains all the setting as described in the readme
+
+            drawer: Drawer(
+              //reduce the height of the drawer header
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: <Widget>[
+                  Container(
+                    height: 150,
+                    child: DrawerHeader(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.secondaryContainer,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 30.0),
+                        child: Text(
+                          'Settings',
+                          style: TextStyle(fontSize: 32),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const ListTile(
+                    title: Text('Colors Picker'),
+                  ),
+
+                  //create a gridview of 7 colors having an icon at each index value: index, remove the scrolling
+
+                  Container(
+                    height: 120,
+                    child: GridView.count(
+                      scrollDirection: Axis.horizontal,
+                      crossAxisCount: 2,
+                      children: List.generate(colorOptions.length, (index) {
+                        return Center(
+                          child: IconButton(
+                            icon: Icon(
+                              index == colorSelected
+                                  ? FluentIcons.checkmark_square_24_filled
+                                  : FluentIcons.checkbox_unchecked_24_filled,
+                              color: colorOptions[index],
+                              size: 33,
+                            ),
+                            onPressed: () {
+                              handleColorSelect(index);
+                            },
+                          ),
+                        );
+                      }),
+                    ),
+                  ),
+
+                  const ListTile(
+                    title: Text('Dark Mode'),
+                  ),
+                  //creating a toggle button to turn on and off the dark theme
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(12, 5, 0, 0),
+                      child: Switch(
+                        value: !useLightMode,
+                        onChanged: (value) {
+                          handleBrightnessChange();
+                        },
+                      ),
+                    ),
+                  ),
+
+                  //creating account settings:
+                  const ListTile(
+                    title: Text('Account Settings', style: TextStyle(fontSize: 17)),
+                  ),
+
+//                   Details of the drawer:
+// On the home screen, we have a hamburger icon which opens up the drawer, following is the content of the drawer:
+// On top we have a label that says Settings, below it we will have a color picker using a gridview that has icons which can be selected to change the colors of the ui. Below the colorPicker we have the option to select dark or light theme. After this we have the account settings where the user will be able to change his name and picture using an AlertDialoguebox. After this we have the send Feedback button which lauch the email app and send an email to ‘haseebkahn365@gmail.com’ and at the end we will have a ‘reset all’ button which will make all the list of the unlockedExperienceList empty but this will be done via an alert dialogue box where the user has to type ‘reset all’ in order to reset the all his data.
+
+                  //creating a text button to launch the alert dialogue box
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: 12, top: 5, bottom: 5),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text('Account Settings'),
+                                      content: SingleChildScrollView(
+                                        child: ListBody(
+                                          children: const <Widget>[
+                                            Text('Change your name and picture'),
+                                          ],
+                                        ),
+                                      ),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: const Text('Change Name'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                        TextButton(
+                                          child: const Text('Change Picture'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  });
+                            },
+                            child: const Text('Change Profile'),
+                            //make elevation 0 and rounded corners
+                            style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              backgroundColor: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5),
+                            ),
+                          ),
+                        ),
+                        //icon for change
+                        Padding(
+                          padding: const EdgeInsets.only(left: 12.0),
+                          child:
+                              Icon(FluentIcons.edit_16_filled, color: Theme.of(context).colorScheme.secondaryContainer),
+                        )
+                      ],
+                    ),
+                  ), //end of the alert dialogue box
+
+                  //creating an alert dialogue box to send feedback in the same fashion as above
+
+                  const ListTile(
+                    title: Text('Send Feedback', style: TextStyle(fontSize: 17)),
+                  ),
+
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: 12, top: 5, bottom: 5),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              //launch
+                            },
+                            child: const Text('Send Feedback'),
+                            //make elevation 0 and rounded corners
+                            style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              backgroundColor: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5),
+                            ),
+                          ),
+                        ),
+
+                        //icon for feedback
+
+                        Padding(
+                          padding: const EdgeInsets.only(left: 12.0),
+                          child: Icon(FluentIcons.alert_12_filled,
+                              color: Theme.of(context).colorScheme.secondaryContainer),
+                        )
+                      ],
+                    ),
+                  ), //end of the feedback button
+
+                  //working on the reset button
+                  const ListTile(
+                    title: Text('Reset Everything'),
+                  ),
+
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: 12, top: 5, bottom: 5),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text('Reset Everything'),
+                                      content: SingleChildScrollView(
+                                        child: ListBody(
+                                          children: const <Widget>[
+                                            Text(
+                                                'Are you sure you want to reset everything? Type \'reset all\' to confirm\n\n'),
+
+                                            //creating a text field to enter the text
+                                            TextField(
+                                              decoration: InputDecoration(
+                                                contentPadding: EdgeInsets.all(10),
+                                                border: OutlineInputBorder(),
+                                                labelText: 'reset all',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: const Text('Yes'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                        TextButton(
+                                          child: const Text('No'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  });
+                            },
+                            child: const Text('Reset my Data'),
+                            //make elevation 0 and rounded corners
+                            style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              backgroundColor: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5),
+                            ),
+                          ),
+                        ),
+
+                        //icon for reset
+
+                        Padding(
+                          padding: const EdgeInsets.only(left: 12.0),
+                          child: Icon(FluentIcons.delete_16_filled,
+                              color: Theme.of(context).colorScheme.secondaryContainer),
+                        )
+                      ],
+                    ),
+                  ), //end of the reset button
+                ],
+              ),
+            ),
             body: Row(children: <Widget>[
               createScreenFor(screenIndex, false),
             ]),

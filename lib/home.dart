@@ -303,11 +303,14 @@ const List<NavigationDestination> appBarDestinations = [
   ),
   NavigationDestination(
     tooltip: "",
-    icon: Icon(Icons.invert_colors_on_outlined),
+    icon: Icon(
+      FluentIcons.people_28_regular,
+      size: 32,
+    ),
     label: 'Patrios',
     selectedIcon: Icon(
-      FluentIcons.search_24_regular,
-      color: Colors.grey,
+      FluentIcons.people_28_filled,
+      size: 32,
     ),
   )
 ];
