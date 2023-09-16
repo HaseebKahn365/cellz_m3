@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+
 import 'package:flutter/material.dart';
 
 class ElevationScreen extends StatelessWidget {
@@ -8,166 +10,52 @@ class ElevationScreen extends StatelessWidget {
     Color shadowColor = Theme.of(context).colorScheme.shadow;
     Color surfaceTint = Theme.of(context).colorScheme.primary;
     return Expanded(
-      child: ListView(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16.0, 20, 16.0, 0),
-            child: Text(
-              'Surface Tint only',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-          ),
-          ElevationGrid(surfaceTintColor: surfaceTint),
-          const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0),
-            child: Text(
-              'Surface Tint and Shadow',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-          ),
-          ElevationGrid(
-            shadowColor: shadowColor,
-            surfaceTintColor: surfaceTint,
-          ),
-          const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0),
-            child: Text(
-              'Shadow only',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-          ),
-          ElevationGrid(shadowColor: shadowColor)
-        ],
-      ),
-    );
-  }
-}
+      child: ListView(children: [
+        /*
+       •	The third screen on the navigation bar is the Patrios screen. This screen is for the donations for the app. Since I don’t want to implement ads in my game, the users who ae willing to donate for the app will be able to pay via this screen. This screen will load data from the firestore document which stores 5 of the latest donors. Here is what the UI looks like. At the center we will have a container which will display the image and the name of the top donor. Who is the top donor, it is the user that gives the most number of donations for today. And below this, we will have the other five donors that just made the most recent donations. 
+        */
+        //lets build the third screen. create an elevation card for the top donor and a list of elevation cards for the other five donors.
 
-const double narrowScreenWidthThreshold = 450;
-
-class ElevationGrid extends StatelessWidget {
-  const ElevationGrid({super.key, this.shadowColor, this.surfaceTintColor});
-
-  final Color? shadowColor;
-  final Color? surfaceTintColor;
-
-  List<ElevationCard> elevationCards(
-      Color? shadowColor, Color? surfaceTintColor) {
-    return elevations
-        .map(
-          (elevationInfo) => ElevationCard(
-            info: elevationInfo,
-            shadowColor: shadowColor,
-            surfaceTint: surfaceTintColor,
-          ),
-        )
-        .toList();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: LayoutBuilder(builder: (context, constraints) {
-        if (constraints.maxWidth < narrowScreenWidthThreshold) {
-          return GridView.count(
-            shrinkWrap: true,
-            crossAxisCount: 3,
-            children: elevationCards(shadowColor, surfaceTintColor),
-          );
-        } else {
-          return GridView.count(
-            shrinkWrap: true,
-            crossAxisCount: 6,
-            children: elevationCards(shadowColor, surfaceTintColor),
-          );
-        }
-      }),
-    );
-  }
-}
-
-class ElevationCard extends StatefulWidget {
-  const ElevationCard(
-      {super.key, required this.info, this.shadowColor, this.surfaceTint});
-
-  final ElevationInfo info;
-  final Color? shadowColor;
-  final Color? surfaceTint;
-
-  @override
-  State<ElevationCard> createState() => _ElevationCardState();
-}
-
-class _ElevationCardState extends State<ElevationCard> {
-  late double _elevation;
-
-  @override
-  void initState() {
-    super.initState();
-    _elevation = widget.info.elevation;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    const BorderRadius borderRadius = BorderRadius.all(Radius.circular(4.0));
-    final bool showOpacity = _elevation == widget.info.elevation;
-    final Color color = Theme.of(context).colorScheme.surface;
-
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Material(
-        borderRadius: borderRadius,
-        elevation: _elevation,
-        color: color,
-        shadowColor: widget.shadowColor,
-        surfaceTintColor: widget.surfaceTint,
-        type: MaterialType.card,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
+        Align(
+          alignment: Alignment.center,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                'Level ${widget.info.level}',
-                style: Theme.of(context).textTheme.labelMedium,
-              ),
-              Text(
-                '${widget.info.level.toInt()} dp',
-                style: Theme.of(context).textTheme.labelMedium,
-              ),
-              if (showOpacity)
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.bottomRight,
-                    child: Text(
-                      '${widget.info.overlayPercent}%',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  ),
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: EdgeInsets.symmetric(horizontal: 8.0),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.inversePrimary.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(30.0),
                 ),
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(height: 10),
+                    Align(
+                        alignment: Alignment.topLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Text('Level '),
+                        )),
+                    const SizedBox(height: 10),
+                    ElevatedButton.icon(
+                      onPressed: () {},
+                      icon: Icon(Icons.play_arrow),
+                      label: Text('Play'),
+                    ),
+                    const SizedBox(height: 10),
+                    Text('High Score: 0'),
+                    const SizedBox(height: 10),
+                    Text('Total Score: 0'),
+                    const SizedBox(height: 10),
+                    Text('Experience: Low'),
+                    const SizedBox(height: 10),
+                  ],
+                ),
+              ),
             ],
           ),
-        ),
-      ),
+        )
+      ]),
     );
   }
 }
-
-class ElevationInfo {
-  const ElevationInfo(this.level, this.elevation, this.overlayPercent);
-  final int level;
-  final double elevation;
-  final int overlayPercent;
-}
-
-const List<ElevationInfo> elevations = <ElevationInfo>[
-  ElevationInfo(0, 0.0, 0),
-  ElevationInfo(1, 1.0, 5),
-  ElevationInfo(2, 3.0, 8),
-  ElevationInfo(3, 6.0, 11),
-  ElevationInfo(4, 8.0, 12),
-  ElevationInfo(5, 12.0, 14),
-];
