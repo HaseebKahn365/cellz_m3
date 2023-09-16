@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
+import 'game_logic/app_ui/home_buttons.dart';
+
 class ComponentScreen extends StatelessWidget {
   const ComponentScreen({super.key, required this.showNavBottomBar});
 
@@ -14,12 +16,13 @@ class ComponentScreen extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Align(
-          alignment: Alignment.topCenter,
+          alignment: Alignment.center,
           child: SizedBox(
             width: _maxWidthConstraint,
             child: ListView(
               shrinkWrap: true,
               children: [
+                ...buildHomeButtons(context),
                 showNavBottomBar
                     ? const NavigationBars(
                         selectedIndex: 0,

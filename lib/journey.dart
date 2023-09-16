@@ -10,6 +10,10 @@ class TypographyScreen extends StatelessWidget {
       child: ListView(
         children: <Widget>[
           const SizedBox(height: 7),
+          const Text(
+            'Headline 1',
+            style: TextStyle(fontSize: 34, fontWeight: FontWeight.w300),
+          ),
         ],
       ),
     );
