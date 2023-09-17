@@ -69,6 +69,8 @@ Experience; //extract the most occurring experience label in the list of unlocke
                   const SizedBox(height: 10),
                   Text('Experience: Low', style: textTheme.bodyLarge),
                   const SizedBox(height: 10),
+                  Text('Games Played: 0', style: textTheme.bodyLarge),
+                  const SizedBox(height: 10),
                 ],
               ),
             ),
