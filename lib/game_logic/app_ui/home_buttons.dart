@@ -2,9 +2,12 @@
 
 import 'package:cellz_m3/game_logic/game_screens/play_with_friend.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../game_screens/play_with_ai.dart';
+
+List<String> tempLevels = ['Level 1', 'Level 2', 'Level 3', 'Level 4', 'Level 5'];
 
 List<Widget> buildHomeButtons(BuildContext context) {
   return [
@@ -103,7 +106,50 @@ List<Widget> buildHomeButtons(BuildContext context) {
         width: 115,
         //elevated button with leading icon
         child: ElevatedButton.icon(
-          onPressed: () {},
+          onPressed: () {
+            //create a cupertino alert dialogue box that asked the user for the level using a dropdown menu and then navigate to the game screen
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                String inputText;
+                return CupertinoAlertDialog(
+                  //create a slow bounce in animation
+                  insetAnimationCurve: Curves.easeInOutCubic,
+                  insetAnimationDuration: const Duration(milliseconds: 400),
+
+                  title: Text(
+                    'Enter a level\n',
+                    style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                  ),
+                  content: SizedBox(
+                    height: 150,
+                    child: CupertinoPicker(
+                      itemExtent: 30,
+                      onSelectedItemChanged: (value) {
+                        inputText = tempLevels[value];
+                      },
+                      children: tempLevels.map((e) => Text(e)).toList(),
+                    ),
+                  ),
+                  actions: [
+                    CupertinoDialogAction(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Cancel'),
+                    ),
+                    CupertinoDialogAction(
+                      onPressed: () {
+                        //navigate to the game screen
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Play'),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
           icon: const Icon(
             FluentIcons.cloud_48_regular,
             size: 35,

@@ -68,14 +68,18 @@ class PlayOrJoin extends StatelessWidget {
                                   builder: (BuildContext context) {
                                     String inputText;
                                     return CupertinoAlertDialog(
+                                      //create a slow bounce in animation
+                                      insetAnimationCurve: Curves.easeInOutCubic,
+                                      insetAnimationDuration: Duration(milliseconds: 400),
+
                                       title: Text(
-                                        'Enter a 4-digit code',
+                                        'Enter a 4-digit code\n',
                                         style: TextStyle(color: Theme.of(context).colorScheme.primary),
                                       ),
                                       content: CupertinoTextField(
                                         keyboardType: TextInputType.number,
                                         maxLength: 4,
-                                        style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                                        style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 20),
                                         onChanged: (value) {
                                           inputText = value;
                                         },
@@ -94,6 +98,7 @@ class PlayOrJoin extends StatelessWidget {
                                             int? inputNumber = int.tryParse(inputText);
                                             if (inputNumber != null && inputNumber.toString().length == 5) {
                                               // Do something with the inputNumber
+                                              print(inputText);
                                               Navigator.of(context).pop();
                                             } else {
                                               // Show an error message
