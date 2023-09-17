@@ -95,15 +95,6 @@ class ElevationScreen extends StatelessWidget {
 
               const SizedBox(height: 20),
               TextButton(
-                  //launch a dialogue box that explains why should the user contribute:
-                  /**
-                 Enjoying the game? 🎮 Want to support us?
-
-Contributions from players like you help keep the game running smoothly and support further development. If you'd like, you can make a small contribution to cover database costs and improve your gaming experience. Your support is greatly appreciated, but it's entirely optional! 🙌
-                
-                 */
-                  //create the dialogue box with formatted text which is also scrollable
-
                   onPressed: () {
                     showDialog(
                         context: context,
@@ -122,7 +113,7 @@ Contributions from players like you help keep the game running smoothly and supp
                                     height: 150,
                                     child: SingleChildScrollView(
                                         child: Text(
-                                      'Contributions from players like you help keep the game running smoothly and support further development. If you\'d like, you can make a small contribution to cover database costs and improve your gaming experience. Your support is greatly appreciated, but it\'s entirely optional! 🙌\nTop contributors are updated here daily 🎊',
+                                      'I try my best to keep this game free without ads. Contributions from players like you help keep the game running smoothly and support further development. If you\'d like, you can make a small contribution to cover database costs and improve your gaming experience. Your support is greatly appreciated, but it\'s entirely optional! 🙌\nTop contributors are updated here daily 🎊',
                                       style: TextStyle(fontSize: 11),
                                     )),
                                   ),
