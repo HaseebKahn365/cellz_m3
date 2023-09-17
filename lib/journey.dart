@@ -12,7 +12,7 @@ class TypographyScreen extends StatelessWidget {
     return Expanded(
       child: ListView(
         children: <Widget>[
-          const SizedBox(height: 7),
+          const SizedBox(height: 14),
           /*
 •	The second screen on the navigationBar is the ‘Journey’ screen. This screen has a carousel slider which will have multiple containers with the same color as the themecolor indicating the levels that are completed by the user. And for the locked levels the container will appear grey. Lets have a look at what the container will contain. The container will have the Level label as a text, a play button to play the repective level, a high score text indicating the highest score that the user has scored, a  total score text indicating the total Score for the level and experience text indicating the performance of the player. This data will come from list of the UnlockedExperience objects list named as ‘unlockedExperienceList’. Following is the structure of the class: 	
 Class unlockedExperience{ 
@@ -80,50 +80,56 @@ Experience; //extract the most occurring experience label in the list of unlocke
                 initialPage: 0,
                 enlargeCenterPage: true),
           ),
-
-          /*    return DataTable(       columns: [         DataColumn(label: Text('TITLE', style: Theme.of(context).textTheme.bodyLarge)),         DataColumn(label: Text('ARTIST'
-           rows: tracks.map((e) {         final selected = context.watch<CurrentTrackModel>().selected?.id == e.id;         final textStyle = TextStyle(           color: selected ? Theme.of(context).colorScheme.secondary : colorOnSelected         );         return DataRow(           cells: [             DataCell(               Text(e.title, style: textStyle),             ),             DataCell(               Text(e.artist, style: textStyle),             ),             DataCell(               Text(e.album, style: textStyle),             ),             DataCell(Text(               e.duration,               style: textStyle,             )),           ],           selected: selected,           onSelectChanged: (_) => context.read<CurrentTrackModel>().selectTrack(e),         );       }).toList(), */
-          //create a table in usng the above style:
-
+          const SizedBox(
+            height: 20,
+          ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 10.0,
+            ),
             child: SingleChildScrollView(
-              child: DataTable(columns: [
-                DataColumn(label: Text('Level', style: textTheme.bodyMedium)),
-                DataColumn(label: Text('High Score', style: textTheme.bodyMedium)),
-                DataColumn(label: Text('Total Score', style: textTheme.bodyMedium)),
-              ], rows: [
-                DataRow(cells: [
-                  DataCell(Align(alignment: Alignment.center, child: Text('1', style: textTheme.bodyMedium))),
-                  DataCell(Align(alignment: Alignment.center, child: Text('1', style: textTheme.bodyMedium))),
-                  DataCell(Align(alignment: Alignment.center, child: Text('1', style: textTheme.bodyMedium))),
-                ]),
-                DataRow(cells: [
-                  DataCell(Align(alignment: Alignment.center, child: Text('1', style: textTheme.bodyMedium))),
-                  DataCell(Align(alignment: Alignment.center, child: Text('1', style: textTheme.bodyMedium))),
-                  DataCell(Align(alignment: Alignment.center, child: Text('1', style: textTheme.bodyMedium))),
-                ]),
-                DataRow(cells: [
-                  DataCell(Align(alignment: Alignment.center, child: Text('5647', style: textTheme.bodyMedium))),
-                  DataCell(Align(alignment: Alignment.center, child: Text('5647', style: textTheme.bodyMedium))),
-                  DataCell(Align(alignment: Alignment.center, child: Text('5647', style: textTheme.bodyMedium))),
-                ]),
-                DataRow(cells: [
-                  DataCell(Align(alignment: Alignment.center, child: Text('5647', style: textTheme.bodyMedium))),
-                  DataCell(Align(alignment: Alignment.center, child: Text('5647', style: textTheme.bodyMedium))),
-                  DataCell(Align(alignment: Alignment.center, child: Text('1', style: textTheme.bodyMedium))),
-                ]),
-                DataRow(cells: [
-                  DataCell(Align(alignment: Alignment.center, child: Text('1', style: textTheme.bodyMedium))),
-                  DataCell(Align(alignment: Alignment.center, child: Text('1', style: textTheme.bodyMedium))),
-                  DataCell(Align(alignment: Alignment.center, child: Text('1', style: textTheme.bodyMedium))),
-                ]),
-                DataRow(cells: [
-                  DataCell(Align(alignment: Alignment.center, child: Text('1', style: textTheme.bodyMedium))),
-                  DataCell(Align(alignment: Alignment.center, child: Text('1', style: textTheme.bodyMedium))),
-                  DataCell(Align(alignment: Alignment.center, child: Text('1', style: textTheme.bodyMedium))),
-                ]),
-              ]),
+              child: DataTable(
+
+                  //inscrease the spacing between rows
+
+                  dataRowHeight: 70,
+                  columns: [
+                    DataColumn(label: Text('Level', style: textTheme.bodyMedium)),
+                    DataColumn(label: Text('High Score', style: textTheme.bodyMedium)),
+                    DataColumn(label: Text('Total Score', style: textTheme.bodyMedium)),
+                  ],
+                  rows: [
+                    DataRow(cells: [
+                      DataCell(Align(alignment: Alignment.center, child: Text('1', style: textTheme.bodyMedium))),
+                      DataCell(Align(alignment: Alignment.center, child: Text('1', style: textTheme.bodyMedium))),
+                      DataCell(Align(alignment: Alignment.center, child: Text('1', style: textTheme.bodyMedium))),
+                    ]),
+                    DataRow(cells: [
+                      DataCell(Align(alignment: Alignment.center, child: Text('2', style: textTheme.bodyMedium))),
+                      DataCell(Align(alignment: Alignment.center, child: Text('1', style: textTheme.bodyMedium))),
+                      DataCell(Align(alignment: Alignment.center, child: Text('1', style: textTheme.bodyMedium))),
+                    ]),
+                    DataRow(cells: [
+                      DataCell(Align(alignment: Alignment.center, child: Text('3', style: textTheme.bodyMedium))),
+                      DataCell(Align(alignment: Alignment.center, child: Text('5647', style: textTheme.bodyMedium))),
+                      DataCell(Align(alignment: Alignment.center, child: Text('5647', style: textTheme.bodyMedium))),
+                    ]),
+                    DataRow(cells: [
+                      DataCell(Align(alignment: Alignment.center, child: Text('4', style: textTheme.bodyMedium))),
+                      DataCell(Align(alignment: Alignment.center, child: Text('5647', style: textTheme.bodyMedium))),
+                      DataCell(Align(alignment: Alignment.center, child: Text('1', style: textTheme.bodyMedium))),
+                    ]),
+                    DataRow(cells: [
+                      DataCell(Align(alignment: Alignment.center, child: Text('5', style: textTheme.bodyMedium))),
+                      DataCell(Align(alignment: Alignment.center, child: Text('1', style: textTheme.bodyMedium))),
+                      DataCell(Align(alignment: Alignment.center, child: Text('1', style: textTheme.bodyMedium))),
+                    ]),
+                    DataRow(cells: [
+                      DataCell(Align(alignment: Alignment.center, child: Text('6', style: textTheme.bodyMedium))),
+                      DataCell(Align(alignment: Alignment.center, child: Text('1', style: textTheme.bodyMedium))),
+                      DataCell(Align(alignment: Alignment.center, child: Text('1', style: textTheme.bodyMedium))),
+                    ]),
+                  ]),
             ),
           ),
         ],
