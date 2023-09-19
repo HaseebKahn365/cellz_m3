@@ -14,11 +14,13 @@ class UnlockedExperience {
   });
 
   void updateHighScore(int newHighScore) {
-    highScore = newHighScore;
+    if (newHighScore > highScore) {
+      highScore = newHighScore;
+    }
   }
 
   void updateTotalScore(int newTotalScore) {
-    totalScore = newTotalScore;
+    totalScore += newTotalScore;
   }
 
   void updateGamesPlayed() {

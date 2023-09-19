@@ -13,3 +13,8 @@ class DailyContributions {
     //compareContributions();
   }
 }
+
+
+//the following code uses sharedPreferences to save and load the theme data
+
+
