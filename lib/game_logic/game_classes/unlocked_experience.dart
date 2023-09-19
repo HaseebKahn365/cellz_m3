@@ -3,6 +3,7 @@ class UnlockedExperience {
   int totalScore;
   final int level;
   final String experience;
+  bool isUnlocked;
   int gamesPlayed;
 
   UnlockedExperience({
@@ -11,6 +12,7 @@ class UnlockedExperience {
     required this.totalScore,
     required this.experience,
     required this.gamesPlayed,
+    this.isUnlocked = false,
   });
 
   void updateHighScore(int newHighScore) {

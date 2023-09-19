@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
+import 'package:cellz_m3/game_logic/lists_of_objects.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 
@@ -64,10 +65,13 @@ class ElevationScreen extends StatelessWidget {
                                 ),
                               ),
                             )),
-                        const SizedBox(height: 10),
-                        Text('Abdul Haseeb',
+                        const SizedBox(
+                          height: 100,
+                        ),
+                        Text(dailyContributionsList[0].name,
                             style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                        Text('Contribution: 1000', style: TextStyle(color: Colors.white, fontSize: 15)),
+                        Text(dailyContributionsList[0].moneyContributed.toString(),
+                            style: TextStyle(color: Colors.white, fontSize: 15)),
                         const SizedBox(height: 10),
                       ],
                     ),
@@ -89,12 +93,51 @@ class ElevationScreen extends StatelessWidget {
                               colors: [shadowColor.withOpacity(0.3), shadowColor.withOpacity(0.0)])),
                     ),
                   ),
+
+                  //add the image of the top contributor using a positioned widget to place it properly onto the stack
+
+                  // CircleAvatar(
+                  //   radius: 70,
+                  //   backgroundImage: NetworkImage(dailyContributionsList[0].imageUrl),
+                  // ),
+
+                  Positioned(
+                    top: 20,
+                    left: 60,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      //add shadow to this container
+                      child: Container(
+                        height: 135,
+                        width: 135,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                          boxShadow: [
+                            BoxShadow(
+                              color: shadowColor.withOpacity(0.25),
+                              spreadRadius: 5,
+                              blurRadius: 13,
+                              offset: Offset(0, 3), // changes position of shadow
+                            ),
+                          ],
+                        ),
+                        child: CircleAvatar(
+                          radius: 70,
+                          backgroundImage: NetworkImage(dailyContributionsList[0].imageUrl),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ), //end of the top contributor
-              //create a text button that says 'why should i contribute?'
 
               const SizedBox(height: 20),
               TextButton(
+                  style: TextButton.styleFrom(
+                    primary: Theme.of(context).colorScheme.secondary,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+                    side: BorderSide(color: Theme.of(context).colorScheme.secondary, width: 1),
+                  ),
                   onPressed: () {
                     showDialog(
                         context: context,
@@ -136,7 +179,7 @@ class ElevationScreen extends StatelessWidget {
                   )),
 
               //create a row of three elevatedButtons.icon for the payment methods having 1$ , 5$ and 10$ as the text
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -164,12 +207,15 @@ class ElevationScreen extends StatelessWidget {
                       color: Theme.of(context).colorScheme.inversePrimary.withOpacity(0.2),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
                       child: ListTile(
-                        leading: Text(
-                          '${index + 2}',
-                          style: TextStyle(fontSize: 13),
+                        //create a list tile with a circle avatar of the image if it exits in the list otherwise, use an empty circle avatar
+                        leading: CircleAvatar(
+                          radius: 20,
+                          backgroundImage: (dailyContributionsList[index + 1].imageUrl) == ''
+                              ? null
+                              : NetworkImage(dailyContributionsList[index + 1].imageUrl),
                         ),
-                        title: Text('Name: Abdul Haseeb'),
-                        subtitle: Text('Total contribution: 1000'),
+                        title: Text(dailyContributionsList[index + 1].name),
+                        subtitle: Text(dailyContributionsList[index + 1].moneyContributed.toString()),
                       ),
                     ),
                   );

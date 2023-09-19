@@ -2,7 +2,6 @@
 
 import 'dart:io';
 
-import 'package:cellz_m3/game_logic/game_classes/unlocked_experience.dart';
 import 'package:cellz_m3/game_logic/lists_of_objects.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +9,6 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'game_logic/game_classes/daily_contributions.dart';
 import 'home.dart';
 import 'patrios.dart';
 import 'journey.dart';
@@ -18,46 +16,6 @@ import 'journey.dart';
 void main() {
   initLists();
   runApp(const CellzM3());
-}
-
-void initLists() {
-  unlockedExperienceList.add(UnlockedExperience(
-    highScore: 34,
-    level: 1,
-    totalScore: 312,
-    experience: 'Low',
-    gamesPlayed: 32,
-  ));
-
-  unlockedExperienceList.add(UnlockedExperience(
-    highScore: 56,
-    level: 2,
-    totalScore: 141,
-    experience: 'Mid',
-    gamesPlayed: 32,
-  ));
-
-  unlockedExperienceList.add(UnlockedExperience(
-    highScore: 78,
-    level: 3,
-    totalScore: 312,
-    experience: 'High',
-    gamesPlayed: 32,
-  ));
-
-//now adding the daily contributions to the list
-
-  dailyContributionsList.add(DailyContributions(
-    name: 'Haseeb',
-    imageUrl: 'https://th.bing.com/th/id/R.2b6a9e7fb7e8a5b1aeb2ff45e1f24cd3?rik=ZK7fVKZXbP4rjA&pid=ImgRaw&r=0',
-    moneyContributed: 100,
-  ));
-
-  dailyContributionsList.add(DailyContributions(
-    name: 'Haseeb',
-    imageUrl: 'https://th.bing.com/th/id/R.2b6a9e7fb7e8a5b1aeb2ff45e1f24cd3?rik=ZK7fVKZXbP4rjA&pid=ImgRaw&r=0',
-    moneyContributed: 100,
-  ));
 }
 
 class CellzM3 extends StatefulWidget {
