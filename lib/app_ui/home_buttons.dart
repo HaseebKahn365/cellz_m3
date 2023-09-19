@@ -5,7 +5,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../game_screens/play_with_ai.dart';
+import '../game_logic/game_screens/play_with_ai.dart';
 
 List<String> tempLevels = ['Level 1', 'Level 2', 'Level 3', 'Level 4', 'Level 5'];
 
@@ -127,6 +127,7 @@ List<Widget> buildHomeButtons(BuildContext context) {
                       itemExtent: 30,
                       onSelectedItemChanged: (value) {
                         inputText = tempLevels[value];
+                        print(inputText);
                       },
                       children: tempLevels.map((e) => Text(e)).toList(),
                     ),

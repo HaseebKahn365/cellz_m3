@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
-import 'game_logic/app_ui/home_buttons.dart';
+import 'app_ui/home_buttons.dart';
 
 class ComponentScreen extends StatelessWidget {
   const ComponentScreen({super.key, required this.showNavBottomBar});

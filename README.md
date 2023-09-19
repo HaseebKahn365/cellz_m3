@@ -768,6 +768,8 @@ Experience; //extract the most occurring experience label in the list of unlocke
 
 Details of the drawer: 
 On the home screen, we have a hamburger icon which opens up the drawer, following is the content of the drawer:
-On top we have a label that says Settings, below it we will have a color picker using a gridview that has icons which can be selected to change the colors of the ui. Below the colorPicker we have the option to select dark or light theme. After this we have the account settings where the user will be able to change his name and picture using an AlertDialoguebox. After this we have the send Feedback button which lauch the email app and send an email to ‘haseebkahn365@gmail.com’ and at the end we will have a ‘reset all’ button which will make all the list of the unlockedExperienceList empty but this will be done via an alert dialogue box where the user has to type ‘reset all’ in order to reset the all his data. 
+On top we have a label that says Settings, below it we will have a color picker using a gridview that has icons which can be selected to change the colors of the ui. Below the colorPicker we have the option to select dark or light theme. After this we have the account settings where the user will be able to change his name and picture using an AlertDialoguebox. After this we have the send Feedback button which lauch the playstore and open the review section of the app. and at the end we will have a ‘reset all’ button which will make all the list of the unlockedExperienceList empty but this will be done via an alert dialogue box where the user has to type ‘reset all’ in order to reset the all his data. 
 
-now implementing the above UI in the app:
+Image Picker and name: 
+We have two variables one for the userImage and the other for userName.
+An alert dialogue box allows the user to click on the circle avatar and pick a color from the gallery or he can also change his name using a textfield in the alert dialogue box.

@@ -82,6 +82,7 @@ class PlayOrJoin extends StatelessWidget {
                                         style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 20),
                                         onChanged: (value) {
                                           inputText = value;
+                                            print(inputText);
                                         },
                                       ),
                                       actions: <Widget>[

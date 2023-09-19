@@ -1,7 +1,11 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:io';
+
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'home.dart';
 import 'patrios.dart';
@@ -21,6 +25,9 @@ class CellzM3 extends StatefulWidget {
 // NavigationRail shows if the screen width is greater or equal to
 // screenWidthThreshold; otherwise, NavigationBar is used for navigation.
 const double narrowScreenWidthThreshold = 450;
+
+File? imageFile;
+File? _tempImageFile;
 
 const Color m3BaseColor = Color(0xff6750a4);
 const List<Color> colorOptions = [
@@ -42,6 +49,9 @@ const List<String> colorText = <String>[
   "Pink",
 ];
 
+String userName = 'Anonymous';
+String _tempUserName = '';
+
 class _CellzM3State extends State<CellzM3> {
   bool useMaterial3 = true;
   bool useLightMode = true;
@@ -49,6 +59,9 @@ class _CellzM3State extends State<CellzM3> {
   int screenIndex = 0;
 
   late ThemeData themeData;
+
+  //create a controller for userName;
+  TextEditingController userNameController = TextEditingController();
 
   @override
   initState() {
@@ -133,6 +146,27 @@ class _CellzM3State extends State<CellzM3> {
         'Home',
         style: TextStyle(fontSize: 20),
       );
+    }
+  }
+
+  void _getFromGallery() async {
+    XFile? pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    _cropImage(pickedFile!.path);
+
+    Navigator.pop(context);
+  }
+
+  void _cropImage(filePath) async {
+    CroppedFile? croppedImage = await ImageCropper().cropImage(
+      sourcePath: filePath,
+      maxWidth: 1080,
+      maxHeight: 1080,
+    );
+
+    if (croppedImage != null) {
+      setState(() {
+        _tempImageFile = File(croppedImage.path);
+      });
     }
   }
 
@@ -234,30 +268,106 @@ class _CellzM3State extends State<CellzM3> {
                           padding: EdgeInsets.only(left: 12, top: 5, bottom: 5),
                           child: ElevatedButton(
                             onPressed: () {
+                              //create an alert dialogue box to change the name and picture of the user
                               showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title: const Text('Account Settings'),
+                                      title: const Text('Change Profile'),
                                       content: SingleChildScrollView(
                                         child: ListBody(
-                                          children: const <Widget>[
-                                            Text('Change your name and picture'),
+                                          children: <Widget>[
+                                            //create a container with a gesture detector with logic to pick an image from the gallery:
+
+                                            Container(
+                                              height: 100,
+                                              width: 100,
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  //pick image from gallery
+                                                  print('tapped on the image');
+                                                  _getFromGallery();
+                                                },
+                                                //create a rounded rectangle with a child of an icon
+                                                child: Padding(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 50.0),
+
+                                                  //if the imageFile is not null then show the image else show the icon
+                                                  child: _tempImageFile != null
+                                                      ? ClipRRect(
+                                                          borderRadius: BorderRadius.circular(10),
+                                                          child: Container(
+                                                            color: Theme.of(context)
+                                                                .colorScheme
+                                                                .secondaryContainer
+                                                                .withOpacity(1),
+                                                            child: Image.file(_tempImageFile!, fit: BoxFit.cover),
+                                                          ))
+                                                      : ClipRRect(
+                                                          borderRadius: BorderRadius.circular(10),
+                                                          child: Container(
+                                                            color: Theme.of(context).colorScheme.secondaryContainer,
+                                                            child: Icon(FluentIcons.camera_add_48_filled,
+                                                                color: Theme.of(context).colorScheme.primary),
+                                                          ),
+                                                        ),
+                                                ),
+                                              ),
+                                            ),
+
+                                            const SizedBox(
+                                              height: 20,
+                                            ),
+
+                                            //creating a text field to enter the text
+                                            TextField(
+                                              controller: userNameController,
+                                              decoration: InputDecoration(
+                                                contentPadding: EdgeInsets.all(10),
+                                                border: OutlineInputBorder(),
+                                                labelText: userName,
+                                              ),
+                                              onChanged: (value) {
+                                                _tempUserName = value;
+                                              },
+                                            ),
                                           ],
                                         ),
                                       ),
                                       actions: <Widget>[
+                                        //create a cancel button
                                         TextButton(
-                                          child: const Text('Change Name'),
+                                          child: const Text('Cancel'),
                                           onPressed: () {
-                                            Navigator.of(context).pop();
+                                            setState(() {
+                                              userNameController.clear();
+                                              _tempImageFile = imageFile;
+                                              Navigator.of(context).pop();
+                                            });
                                           },
                                         ),
-                                        TextButton(
-                                          child: const Text('Change Picture'),
+                                        //create a save button with rounded border outline
+
+                                        ElevatedButton(
                                           onPressed: () {
+                                            setState(() {
+                                              userName = _tempUserName;
+                                              userNameController.clear();
+                                              //change the user Image here
+                                              imageFile = _tempImageFile;
+                                            });
                                             Navigator.of(context).pop();
                                           },
+                                          child: const Text('Save'),
+                                          //make elevation 0 and rounded corners
+                                          style: ElevatedButton.styleFrom(
+                                            elevation: 0,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                            backgroundColor:
+                                                Theme.of(context).colorScheme.secondaryContainer.withOpacity(1),
+                                          ),
                                         ),
                                       ],
                                     );
