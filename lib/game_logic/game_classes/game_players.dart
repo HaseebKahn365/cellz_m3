@@ -1,6 +1,7 @@
 import '../game_classes.dart';
 
 class GamePlayers {
+  String name = '';
   bool isPlayer = false;
   int score = 0;
   int numOfLives = 4;
@@ -10,6 +11,7 @@ class GamePlayers {
   //Constructor to instantiate the values:
   GamePlayers(
       {required this.isPlayer,
+      this.name = '',
       this.hasTurn = true,
       required this.score,
       required this.numOfLives,

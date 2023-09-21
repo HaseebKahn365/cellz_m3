@@ -52,7 +52,7 @@ const List<String> colorText = <String>[
   "Pink",
 ];
 
-String userName = 'Anonymous';
+String userName = 'Load from localStorage';
 String _tempUserName = '';
 
 class _CellzM3State extends State<CellzM3> {
@@ -271,10 +271,6 @@ class _CellzM3State extends State<CellzM3> {
                     title: Text('Account Settings', style: TextStyle(fontSize: 17)),
                   ),
 
-//                   Details of the drawer:
-// On the home screen, we have a hamburger icon which opens up the drawer, following is the content of the drawer:
-// On top we have a label that says Settings, below it we will have a color picker using a gridview that has icons which can be selected to change the colors of the ui. Below the colorPicker we have the option to select dark or light theme. After this we have the account settings where the user will be able to change his name and picture using an AlertDialoguebox. After this we have the send Feedback button which lauch the email app and send an email to ‘haseebkahn365@gmail.com’ and at the end we will have a ‘reset all’ button which will make all the list of the unlockedExperienceList empty but this will be done via an alert dialogue box where the user has to type ‘reset all’ in order to reset the all his data.
-
                   //creating a text button to launch the alert dialogue box
                   Align(
                     alignment: Alignment.centerLeft,
@@ -367,7 +363,9 @@ class _CellzM3State extends State<CellzM3> {
                                         ElevatedButton(
                                           onPressed: () {
                                             setState(() {
-                                              userName = _tempUserName;
+                                              if (_tempUserName.isNotEmpty) {
+                                                userName = _tempUserName;
+                                              }
                                               userNameController.clear();
                                               //change the user Image here
                                               imageFile = _tempImageFile;
