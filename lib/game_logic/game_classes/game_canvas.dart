@@ -110,3 +110,5 @@ class GameCanvas {
     return 'GameCanvas(numOfXPoints: $numOfXPoints, numOfYPoints: $numOfYPoints, isGameOver: $isGameOver, movesLeft: $movesLeft, level: $level)';
   }
 }
+
+

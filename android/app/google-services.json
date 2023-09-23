@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "949191366590",
+    "project_id": "cellz-beta",
+    "storage_bucket": "cellz-beta.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:949191366590:android:912503c33485ab0d710bef",
+        "android_client_info": {
+          "package_name": "com.example.cellz_m3"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTF8A09aRmWY5wJCx-i6gr1hNBMd8ql1A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
