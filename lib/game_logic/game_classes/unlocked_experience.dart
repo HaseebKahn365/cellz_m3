@@ -15,6 +15,8 @@ class UnlockedExperience {
     this.isUnlocked = false,
   });
 
+  get value => null;
+
   void updateHighScore(int newHighScore) {
     if (newHighScore > highScore) {
       highScore = newHighScore;
