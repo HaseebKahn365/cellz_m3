@@ -7,6 +7,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../firebase_logic/invite.dart';
 import '../game_classes/unlocked_experience.dart';
 
 //this is a page with tab views to invite a friend or join a friend
@@ -147,7 +148,9 @@ class _PlayOrJoinState extends State<PlayOrJoin> {
                                         ),
 
                                         content: FutureBuilder(
-                                          future: Future.delayed(Duration(seconds: 2), () => 'data'),
+                                          //pass the invite function to the future.
+                                          //Future<bool> invite(int intCode, int level)
+                                          future: invite(intCode, selectedLevel),
                                           builder: (context, snapshot) {
                                             if (snapshot.hasData) {
                                               return CodeGenerated(

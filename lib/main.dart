@@ -9,13 +9,18 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 import 'firebase_options.dart';
 import 'home.dart';
 import 'patrios.dart';
 import 'journey.dart';
 
+const uuid = Uuid();
+late String userUUID;
 void main() async {
+  userUUID = uuid.v1().toString();
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -58,7 +63,7 @@ const List<String> colorText = <String>[
   "Pink",
 ];
 
-String userName = 'Load from localStorage';
+String userName = 'Anonymous';
 String _tempUserName = '';
 
 class _CellzM3State extends State<CellzM3> {
