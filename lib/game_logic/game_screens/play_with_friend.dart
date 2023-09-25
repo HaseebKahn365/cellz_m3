@@ -153,12 +153,23 @@ class _PlayOrJoinState extends State<PlayOrJoin> {
                                           future: invite(intCode, selectedLevel),
                                           builder: (context, snapshot) {
                                             if (snapshot.hasData) {
-                                              return CodeGenerated(
-                                                intCode: intCode,
-                                              );
-                                            } else {
-                                              return WaitingSimulation();
+                                              //the invite will return true or false after it is resolved. we will use the false value to show snakebar that says 'Sorry! Failed to generate code'
+                                              if (snapshot.data == true) {
+                                                return CodeGenerated(
+                                                  intCode: intCode,
+                                                );
+                                              }
                                             }
+                                            if (snapshot.data == false) {
+                                              Navigator.of(context).pop();
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(
+                                                  content: Text('Sorry! Failed to generate code'),
+                                                  duration: Duration(seconds: 2),
+                                                ),
+                                              );
+                                            }
+                                            return WaitingSimulation();
                                           },
                                         ),
                                       );

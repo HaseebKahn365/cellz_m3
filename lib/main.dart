@@ -303,8 +303,8 @@ class _CellzM3State extends State<CellzM3> {
                                             //create a container with a gesture detector with logic to pick an image from the gallery:
 
                                             Container(
-                                              height: 100,
-                                              width: 100,
+                                              height: 150,
+                                              width: 150,
                                               child: GestureDetector(
                                                 onTap: () {
                                                   //pick image from gallery
@@ -313,7 +313,7 @@ class _CellzM3State extends State<CellzM3> {
                                                 },
                                                 //create a rounded rectangle with a child of an icon
                                                 child: Padding(
-                                                  padding: const EdgeInsets.symmetric(horizontal: 50.0),
+                                                  padding: const EdgeInsets.symmetric(horizontal: 30.0),
 
                                                   //if the imageFile is not null then show the image else show the icon
                                                   child: _tempImageFile != null
