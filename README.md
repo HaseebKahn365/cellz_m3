@@ -798,5 +798,10 @@ String inviterDocUid = ‘Uid Of the Document of the inviter’
 After the creation of the above document the inviter will now wait for the isWaitingStatus of the document to change. 
 
 
+Invitation Handeling:
+
+Now that we can handle the creation of the necessary document for the invitation we are now going to make some slight changes to better handle the wait process for the inviter. If the code is generated successfully then it would mean that we are good to wait for the joiner to join. But the waiting process needs to be proper for the inviter. After the code is generated, the alert dialogue box should pop automatically after 2 seconds and on the bottom sheet we are going to display a new Text widget that displays ‘(Waiting for your friend to enter 1234 in the join tab)’, this widget is displayed only if a state variable called isCodeGenerated ==true. Not only this, we will also disable the invite button using the same state variable. This way  we will indicate to the inviter that you are waiting for the joiner. In case if the inviter tries to pop the bottom sheet without being joined then we also need to delete the invitation document that was created in order to make sure that we don’t over-crowd the WaitingDocs collection.
+
+
 
 

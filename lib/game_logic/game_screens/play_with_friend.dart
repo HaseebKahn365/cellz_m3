@@ -19,11 +19,15 @@ class PlayOrJoin extends StatefulWidget {
   State<PlayOrJoin> createState() => _PlayOrJoinState();
 }
 
+var tempIntCode = 0;
+
 class _PlayOrJoinState extends State<PlayOrJoin> {
   int selectedLevel = 2;
   //create a random integer from 0 to 9999
   int intCode = Random().nextInt(9999);
   String inputCode = '';
+
+  bool isCodeGenerated = false;
 
   @override
   Widget build(BuildContext context) {
@@ -69,113 +73,167 @@ class _PlayOrJoinState extends State<PlayOrJoin> {
                           //create a dropdown menu for level selection and store the selected level in a variable
                           Text('Selected Level: $selectedLevel'),
 
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              // Create a text widget to display the label for the dropdown menu
-                              Text(
-                                'Select a level:  ',
-                                style: TextStyle(color: Theme.of(context).colorScheme.primary),
-                              ),
-
-                              // Create a dropdown menu for level selection
-                              DropdownButton<int>(
-                                value: selectedLevel, // The currently selected level
-                                // The dropdown menu icon
-                                iconSize: 20, // The size of the dropdown menu icon
-
-                                elevation: 16, // The elevation of the dropdown menu
-
-                                focusColor:
-                                    Theme.of(context).colorScheme.primary, // The focus color of the dropdown menu
-                                style: TextStyle(
-                                    color: Theme.of(context).colorScheme.primary), // The style of the dropdown menu
-                                borderRadius: BorderRadius.circular(10), // The border radius of the dropdown menu
-                                isDense: true,
-                                onChanged: (int? newValue) {
-                                  // The callback function that is called when the user selects a new value from the dropdown menu
-                                  setState(() {
-                                    if (unlockedExperienceList[newValue! - 1].isUnlocked == true && newValue > 1) {
-                                      selectedLevel = newValue; // Update the selected level variable with the new value
-                                    }
-                                  });
-                                  print(selectedLevel); // Print the selected level to the console
-                                },
-                                items: unlockedExperienceList
-                                    .map<DropdownMenuItem<int>>((UnlockedExperience unlockedExperience) {
-                                  return DropdownMenuItem<int>(
-                                    // Only the unlocked levels are displayed in the dropdown menu
-                                    value: unlockedExperience.level,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(left: 0), // Adjust the padding as needed
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                        children: [
-                                          Text(
-                                            unlockedExperience.level.toString(),
-                                            style: TextStyle(color: Theme.of(context).colorScheme.primary),
-                                          ),
-                                          (unlockedExperience.isUnlocked == false)
-                                              ? Icon(
-                                                  FluentIcons.lock_closed_32_regular,
-                                                  color: Theme.of(context).colorScheme.primary,
-                                                  size: 10,
-                                                )
-                                              : SizedBox(
-                                                  width: 0,
-                                                ),
-                                        ],
-                                      ),
+                          (isCodeGenerated)
+                              ? const SizedBox.shrink()
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    // Create a text widget to display the label for the dropdown menu
+                                    Text(
+                                      'Select a level:  ',
+                                      style: TextStyle(color: Theme.of(context).colorScheme.primary),
                                     ),
-                                  );
-                                }).toList(),
-                              ),
-                            ],
-                          ),
 
-                          ElevatedButton(
-                              onPressed: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return CupertinoAlertDialog(
-                                        //create a slow bounce in animation
-                                        insetAnimationCurve: Curves.easeInOutCubic,
-                                        insetAnimationDuration: Duration(milliseconds: 400),
-                                        title: Text(
-                                          'Share Link',
+                                    // Create a dropdown menu for level selection
+                                    DropdownButton<int>(
+                                      value: selectedLevel, // The currently selected level
+                                      // The dropdown menu icon
+                                      iconSize: 20, // The size of the dropdown menu icon
+
+                                      elevation: 16, // The elevation of the dropdown menu
+
+                                      focusColor:
+                                          Theme.of(context).colorScheme.primary, // The focus color of the dropdown menu
+                                      style: TextStyle(
+                                          color:
+                                              Theme.of(context).colorScheme.primary), // The style of the dropdown menu
+                                      borderRadius: BorderRadius.circular(10), // The border radius of the dropdown menu
+                                      isDense: true,
+                                      onChanged: (int? newValue) {
+                                        // The callback function that is called when the user selects a new value from the dropdown menu
+                                        setState(() {
+                                          if (unlockedExperienceList[newValue! - 1].isUnlocked == true &&
+                                              newValue > 1) {
+                                            selectedLevel =
+                                                newValue; // Update the selected level variable with the new value
+                                          }
+                                        });
+                                        print(selectedLevel); // Print the selected level to the console
+                                      },
+                                      items: unlockedExperienceList
+                                          .map<DropdownMenuItem<int>>((UnlockedExperience unlockedExperience) {
+                                        return DropdownMenuItem<int>(
+                                          // Only the unlocked levels are displayed in the dropdown menu
+                                          value: unlockedExperience.level,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(left: 0), // Adjust the padding as needed
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                              children: [
+                                                Text(
+                                                  unlockedExperience.level.toString(),
+                                                  style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                                                ),
+                                                (unlockedExperience.isUnlocked == false)
+                                                    ? Icon(
+                                                        FluentIcons.lock_closed_32_regular,
+                                                        color: Theme.of(context).colorScheme.primary,
+                                                        size: 10,
+                                                      )
+                                                    : SizedBox(
+                                                        width: 0,
+                                                      ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ],
+                                ),
+
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                            child: ElevatedButton(
+                              onPressed: isCodeGenerated
+                                  ? null
+                                  : () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return CupertinoAlertDialog(
+                                              //create a slow bounce in animation
+                                              insetAnimationCurve: Curves.easeInOutCubic,
+                                              insetAnimationDuration: Duration(milliseconds: 400),
+                                              title: Text(
+                                                'Share Link',
+                                                style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                                              ),
+
+                                              content: FutureBuilder(
+                                                future: invite(intCode, selectedLevel),
+                                                builder: (context, snapshot) {
+                                                  if (snapshot.hasData) {
+                                                    //the invite will return true or false after it is resolved. we will use the false value to show snakebar that says 'Sorry! Failed to generate code'
+                                                    if (snapshot.data == true) {
+                                                      //make sure to pop the context after 2 seconds and setState(() {
+                                                      //   isCodeGenerated = true;
+                                                      // });
+
+                                                      Future.delayed(Duration(seconds: 2), () {
+                                                        Navigator.of(context).pop();
+                                                        setState(() {
+                                                          isCodeGenerated = true;
+                                                        });
+                                                      });
+
+                                                      return CodeGenerated(
+                                                        intCode: intCode,
+                                                      );
+                                                    }
+                                                  }
+                                                  if (snapshot.data == false) {
+                                                    //pop the alert dialogue box
+                                                    Navigator.of(context).pop();
+                                                    // Show a Snackbar with an error message
+                                                    ScaffoldMessenger.of(context).showSnackBar(
+                                                      SnackBar(
+                                                        content:
+                                                            Text('Sorry! Failed to generate code. Try again later'),
+                                                        duration: Duration(seconds: 2),
+                                                      ),
+                                                    );
+                                                  }
+                                                  return WaitingSimulation();
+                                                },
+                                              ),
+                                            );
+                                          });
+                                    },
+
+                              //make sure to display 'Waiting' as label if the code is generated
+                              child: isCodeGenerated
+                                  ? Column(
+                                      children: [
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Text(
+                                          'Waiting...',
                                           style: TextStyle(color: Theme.of(context).colorScheme.primary),
                                         ),
-
-                                        content: FutureBuilder(
-                                          //pass the invite function to the future.
-                                          //Future<bool> invite(int intCode, int level)
-                                          future: invite(intCode, selectedLevel),
-                                          builder: (context, snapshot) {
-                                            if (snapshot.hasData) {
-                                              //the invite will return true or false after it is resolved. we will use the false value to show snakebar that says 'Sorry! Failed to generate code'
-                                              if (snapshot.data == true) {
-                                                return CodeGenerated(
-                                                  intCode: intCode,
-                                                );
-                                              }
-                                            }
-                                            if (snapshot.data == false) {
-                                              Navigator.of(context).pop();
-                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                SnackBar(
-                                                  content: Text('Sorry! Failed to generate code'),
-                                                  duration: Duration(seconds: 2),
-                                                ),
-                                              );
-                                            }
-                                            return WaitingSimulation();
-                                          },
+                                        const SizedBox(
+                                          height: 10,
                                         ),
-                                      );
-                                    });
-                              },
-                              child: Text('Invite Friend')),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                          child: LinearProgressIndicator(),
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Text(
+                                          '(Ask your friend to enter $intCode in the join tab)',
+                                          style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 10),
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                      ],
+                                    )
+                                  : Text('Invite Friend'),
+                            ),
+                          ),
                         ],
                       ),
                       //join a friend tab

@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:cellz_m3/game_logic/game_screens/play_with_friend.dart';
 import 'package:cellz_m3/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -36,6 +37,19 @@ Future<bool> invite(int intCode, int level) async {
 
   //right now it is genrating multiple documents for the same user if the user presses the invite button multiple times
   //we are now going to use a global variable called userUUID
+
+  //adding a safety layer by checking if there already exists a document in the waiitng docs collection with the same intCode. if there is a document with the same intCode in the collection ‘WaitingDocs’ then we will return false
+  //this return value will be used to show a snackbar to the user that the invite failed
+
+  if (await FirebaseFirestore.instance
+      .collection('WaitingDocs')
+      .doc(intCode.toString())
+      .get()
+      .then((value) => value.exists)) {
+    return false;
+  }
+
+  //otherwise we will create a new document in the 'Users' Collection for the profile of the inviter
   try {
     //upload the imageFile to firebase storage if it is not null otherwise upload assets/profile.jpg and put its url in a string variable
 
@@ -67,6 +81,8 @@ Future<bool> invite(int intCode, int level) async {
     });
 
     print('user document created successfully');
+
+    tempIntCode = intCode;
   } catch (e) {
     print(e);
     return false;

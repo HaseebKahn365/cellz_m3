@@ -56,19 +56,18 @@ List<Widget> buildHomeButtons(BuildContext context) {
             // Display a bottom sheet to show the user the option to invite or joing a friend. this is done using a tab view inside the bottom sheet. the first tab is to invite a friend using a code generated and a share button and the second tab is to join a friend using a text field and a join button
             showModalBottomSheet(
               context: context,
-              //make the height adjustable with the keyboard pops up
-
               transitionAnimationController: AnimationController(
                 //make the animation accelerate curve
                 vsync: Navigator.of(context),
                 duration: const Duration(milliseconds: 500),
                 reverseDuration: const Duration(milliseconds: 250),
               ),
-
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(30.0)),
               ),
               builder: (context) => Material(
+                //In case if the inviter tries to pop the bottom sheet without being joined then we also need to delete the invitation document that was created in order to make sure that we don’t over-crowd the WaitingDocs collection.
+
                 clipBehavior: Clip.antiAlias, // Add this line
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.vertical(top: Radius.circular(30.0)),
