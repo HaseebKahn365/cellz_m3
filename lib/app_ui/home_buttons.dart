@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../game_logic/game_screens/play_with_ai.dart';
 
@@ -56,8 +57,6 @@ List<Widget> buildHomeButtons(BuildContext context) {
           onPressed: () {
             // Display a bottom sheet to show the user the option to invite or joing a friend. this is done using a tab view inside the bottom sheet. the first tab is to invite a friend using a code generated and a share button and the second tab is to join a friend using a text field and a join button
 
-            final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-            PersistentBottomSheetController<dynamic>? _bottomSheetController;
             showModalBottomSheet(
               context: context,
               transitionAnimationController: AnimationController(
@@ -76,12 +75,22 @@ List<Widget> buildHomeButtons(BuildContext context) {
                     try {
                       await FirebaseFirestore.instance
                           .collection('waitingDocs')
-                          .doc(tempIntCode?.toString())
+                          .doc(tempIntCode.toString())
                           .delete()
                           .then((value) => print('deleted the document with intCode = $tempIntCode'));
                     } catch (error) {
                       print('\nFailed to delete the document with intCode = $tempIntCode: $error\n');
                     }
+
+                    //show toast to show 'invite cancelled'
+                    Fluttertoast.showToast(
+                      msg: "Invite Dismissed",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM_LEFT,
+                      timeInSecForIosWeb: 1,
+                      textColor: Colors.white,
+                      fontSize: 16.0,
+                    );
 
                     // Return true to allow the bottom sheet to be popped
                     return true;

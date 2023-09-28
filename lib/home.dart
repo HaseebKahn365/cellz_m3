@@ -8,9 +8,6 @@ import 'app_ui/home_buttons.dart';
 class ComponentScreen extends StatelessWidget {
   ComponentScreen({super.key, required this.showNavBottomBar});
 
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  PersistentBottomSheetController<dynamic>? _bottomSheetController;
-
   final bool showNavBottomBar;
 
   @override

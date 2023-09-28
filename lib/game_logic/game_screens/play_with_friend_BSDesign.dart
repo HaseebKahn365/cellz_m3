@@ -294,7 +294,6 @@ class _PlayOrJoinState extends State<PlayOrJoin> {
                                                 //     ),
                                                 //   ),); //to be implemented
                                               }
-                                              Navigator.of(context).pop();
                                             } else {
                                               print('error in input');
                                             }
