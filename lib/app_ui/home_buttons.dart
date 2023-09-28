@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'package:cellz_m3/game_logic/game_screens/play_with_friend.dart';
+import 'package:cellz_m3/game_logic/game_screens/play_with_friend_BSDesign.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -57,7 +58,6 @@ List<Widget> buildHomeButtons(BuildContext context) {
             showModalBottomSheet(
               context: context,
               transitionAnimationController: AnimationController(
-                //make the animation accelerate curve
                 vsync: Navigator.of(context),
                 duration: const Duration(milliseconds: 500),
                 reverseDuration: const Duration(milliseconds: 250),
@@ -65,15 +65,30 @@ List<Widget> buildHomeButtons(BuildContext context) {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(30.0)),
               ),
-              builder: (context) => Material(
-                //In case if the inviter tries to pop the bottom sheet without being joined then we also need to delete the invitation document that was created in order to make sure that we don’t over-crowd the WaitingDocs collection.
+              builder: (context) {
+                return WillPopScope(
+                  onWillPop: () async {
+                    // Place your code here to delete the invitation document
+                    print('Deleting document with intCode = $tempIntCode');
+                    try {
+                      await FirebaseFirestore.instance.collection('waitingDocs').doc(tempIntCode?.toString()).delete();
+                      print('\nDeleted the document with intCode = $tempIntCode\n');
+                    } catch (error) {
+                      print('\nFailed to delete the document with intCode = $tempIntCode: $error\n');
+                    }
 
-                clipBehavior: Clip.antiAlias, // Add this line
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(30.0)),
-                ),
-                child: PlayOrJoin(),
-              ),
+                    // Return true to allow the bottom sheet to be popped
+                    return true;
+                  },
+                  child: Material(
+                    clipBehavior: Clip.antiAlias,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(30.0)),
+                    ),
+                    child: PlayOrJoin(),
+                  ),
+                );
+              },
             );
           },
           icon: const Icon(

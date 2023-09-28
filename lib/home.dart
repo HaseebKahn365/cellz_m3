@@ -6,7 +6,10 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'app_ui/home_buttons.dart';
 
 class ComponentScreen extends StatelessWidget {
-  const ComponentScreen({super.key, required this.showNavBottomBar});
+  ComponentScreen({super.key, required this.showNavBottomBar});
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  PersistentBottomSheetController<dynamic>? _bottomSheetController;
 
   final bool showNavBottomBar;
 

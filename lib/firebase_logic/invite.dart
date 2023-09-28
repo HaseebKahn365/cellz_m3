@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:cellz_m3/game_logic/game_screens/play_with_friend.dart';
+import 'package:cellz_m3/game_logic/game_screens/play_with_friend_BSDesign.dart';
 import 'package:cellz_m3/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -81,19 +81,11 @@ Future<bool> invite(int intCode, int level) async {
     });
 
     print('user document created successfully');
-
-    tempIntCode = intCode;
   } catch (e) {
     print(e);
     return false;
   }
 
-  //create a document in the collection ‘WaitingDocs’ only if there doesn't exist a document with the same intCode in the collection ‘WaitingDocs’.
-  //the document will have the following fields:
-  // Uid Of the Document: intCode
-  // Int Level = SelectedLevel
-  // Bool isWaitingStatus = true;
-  // String inviterDocUid = ‘Uid Of the Document of the inviter’
   try {
     await FirebaseFirestore.instance.collection('WaitingDocs').doc(intCode.toString()).set({
       'Uid Of the Document': intCode,
@@ -102,6 +94,11 @@ Future<bool> invite(int intCode, int level) async {
       'inviterDocUid': FirebaseAuth.instance.currentUser?.uid,
       'createdAt': Timestamp.now(),
     });
+
+    print('waiting document created successfully');
+    //changing the tempIntCode to intCode so that if the user pops the bottomsheet then we would delete the document with the same intCode from the waitingDocs collection
+
+    tempIntCode = intCode;
   } catch (e) {
     //if there is a document with the same intCode in the collection ‘WaitingDocs’ the
     print(e);
