@@ -55,6 +55,9 @@ List<Widget> buildHomeButtons(BuildContext context) {
         child: ElevatedButton.icon(
           onPressed: () {
             // Display a bottom sheet to show the user the option to invite or joing a friend. this is done using a tab view inside the bottom sheet. the first tab is to invite a friend using a code generated and a share button and the second tab is to join a friend using a text field and a join button
+
+            final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+            PersistentBottomSheetController<dynamic>? _bottomSheetController;
             showModalBottomSheet(
               context: context,
               transitionAnimationController: AnimationController(
@@ -69,10 +72,13 @@ List<Widget> buildHomeButtons(BuildContext context) {
                 return WillPopScope(
                   onWillPop: () async {
                     // Place your code here to delete the invitation document
-                    print('Deleting document with intCode = $tempIntCode');
+
                     try {
-                      await FirebaseFirestore.instance.collection('waitingDocs').doc(tempIntCode?.toString()).delete();
-                      print('\nDeleted the document with intCode = $tempIntCode\n');
+                      await FirebaseFirestore.instance
+                          .collection('waitingDocs')
+                          .doc(tempIntCode?.toString())
+                          .delete()
+                          .then((value) => print('deleted the document with intCode = $tempIntCode'));
                     } catch (error) {
                       print('\nFailed to delete the document with intCode = $tempIntCode: $error\n');
                     }
