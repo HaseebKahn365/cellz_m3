@@ -821,6 +821,19 @@ The validCodeWidget is just a container with a row as its child which contains a
 The inValidCodeWidget is also a similar widget with a cross icon and text ‘Can’t join your friend. Try again!’. 
 The Loading widget is is a container with a column that has text ‘Validating’ and a LinearProgressIndicator as its children. 
 
+Connecting two friends in GameplayScreen:
+
+On the joiner side:
+Now that we are able to validate the code entered by the joiner, we create a document in the ‘GamePlayDocs’ collection in firestore which will be the main document where the actual game play between the players will happen. The following is the structure of the game play document:
+Uid Of the Document: ‘inviterDocUid+intCode’
+Int Level = storedLevel on joiner end
+inviterRef = inviterDocUid
+joinerRef = current uid of the joiner
+Bool Turn = true(for the invitor’s turn) / false (for the  joiner’s turn)
+String  Move= ‘34’ (these two values indicate the points of the line drawn in this case allPoints[3] and allPoints[4])
+The above is just a representation of the fields. The initial values for the fields will be bool Turn = 0; and String Move = ‘’. After creation of the above document, we download the invitation document from which we will find the uid of the inviter and use it as an argument in the GameplayScreen(String inviterUid) we set the isWaiting to false and immediately navigate to the GameplayScreen(inviterUid). On this screen we will simply display the a text ‘Connected with ${inviterName}’. 
 
 
+On the inviter side:
+on the inviter side we listen for any changes on the bottomSheet as soon as we observe a change in the bool isWaitingStatus, we will delete the invitation document and navigate to the GameplayScreen(String inviterUid).
 
