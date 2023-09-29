@@ -72,26 +72,39 @@ List<Widget> buildHomeButtons(BuildContext context) {
                   onWillPop: () async {
                     // Place your code here to delete the invitation document
 
-                    try {
-                      await FirebaseFirestore.instance
-                          .collection('waitingDocs')
-                          .doc(tempIntCode.toString())
-                          .delete()
-                          .then((value) => print('deleted the document with intCode = $tempIntCode'));
-                    } catch (error) {
-                      print('\nFailed to delete the document with intCode = $tempIntCode: $error\n');
+                    //if the document exists only then we will delete it
+
+                    print('value of the tempInt from the willPopScope is $tempIntCode');
+                    bool showOnce = true;
+
+                    if (await FirebaseFirestore.instance
+                        .collection('WaitingDocs')
+                        .doc(tempIntCode.toString())
+                        .get()
+                        .then((value) => value.exists)) {
+                      try {
+                        await FirebaseFirestore.instance
+                            .collection('WaitingDocs')
+                            .doc(tempIntCode.toString())
+                            .delete()
+                            .then((value) => print('deleted the document with intCode = $tempIntCode'));
+                      } catch (error) {
+                        print('\nFailed to delete the document with intCode = $tempIntCode: $error\n');
+                      }
+
+                      //show toast to show 'invite cancelled'
+                      if (showOnce) {
+                        Fluttertoast.showToast(
+                          msg: "Invite Dismissed",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM_LEFT,
+                          timeInSecForIosWeb: 1,
+                          textColor: Colors.white,
+                          fontSize: 16.0,
+                        );
+                      }
+                      showOnce = false;
                     }
-
-                    //show toast to show 'invite cancelled'
-                    Fluttertoast.showToast(
-                      msg: "Invite Dismissed",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM_LEFT,
-                      timeInSecForIosWeb: 1,
-                      textColor: Colors.white,
-                      fontSize: 16.0,
-                    );
-
                     // Return true to allow the bottom sheet to be popped
                     return true;
                   },

@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../firebase_logic/invite.dart';
+import '../../firebase_logic/join.dart';
 import '../game_classes/unlocked_experience.dart';
 
 //this is a page with tab views to invite a friend or join a friend
@@ -19,15 +20,20 @@ class PlayOrJoin extends StatefulWidget {
   State<PlayOrJoin> createState() => _PlayOrJoinState();
 }
 
-var tempIntCode = 0;
+var tempIntCode =
+    0; //this is just the global version of the intCode variable for deleting the document in the WaitingDocs collection
 
 class _PlayOrJoinState extends State<PlayOrJoin> {
   int selectedLevel = 2;
   //create a random integer from 0 to 9999
   int intCode = Random().nextInt(9999);
+
   String inputCode = '';
 
+  int joinCode = 0;
+
   bool isCodeGenerated = false;
+  bool isJoinCodeSubmitted = false;
 
   @override
   Widget build(BuildContext context) {
@@ -241,70 +247,181 @@ class _PlayOrJoinState extends State<PlayOrJoin> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Text('Join a friend'),
-                          ElevatedButton(
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return CupertinoAlertDialog(
-                                      //create a slow bounce in animation
-                                      insetAnimationCurve: Curves.easeInOutCubic,
-                                      insetAnimationDuration: Duration(milliseconds: 400),
 
-                                      title: Text(
-                                        'Enter a 4-digit code\n',
-                                        style: TextStyle(color: Theme.of(context).colorScheme.primary),
-                                      ),
-                                      content: CupertinoTextField(
-                                        keyboardType: TextInputType.number,
-                                        maxLength: 4,
-                                        style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 20),
-                                        onChanged: (value) {
-                                          inputCode = value;
-                                        },
-                                      ),
-                                      actions: <Widget>[
-                                        CupertinoDialogAction(
-                                          child: Text('Cancel'),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
+                          /* Joining Handeling:
+After the user submits the value in the 
+
+we need to create a  Future<bool> join(int intCode) async {} function that will be executed as the user submits the code in the alertdialogue box. The following is the logic inside the join() function:
+we first check if there exisits a document in the collection ‘WaitingDocs’ under the same uid as the intJoinCode entered by the joiner. If there exists such document then we are going to update the state of Bool isWaitingStatus  to false. This way the inviter will be notified that the joiner has joined the invitation and along with this we also need to upload the profile document of the joiner to the ‘Users’ collection.
+The following is the structure of the joiner document:
+Uid Of the Document: …
+Bool isInviter = false;
+String Name = ‘Name of the joiner’
+String imageUrl = ‘Image is Uploaded and its url is stored in here’;
+Int Score = 0;
+
+After the successful creation of the document we will return true. Otherwise in any case causing errors we will return false. These Boolean values are essential to display validCodeWidget or the invalidCodeWidget from the FutureBuilder.  The following details covers what the FutureBuilder in the join tab does:
+In the join tab we are gonna use a Boolean variable named isJoinCodeSubmitted to show the future builder widget or not. Inside the future builder we have three different states. One is the waiting state, this is the state when the future has not been resolved yet. In this case we will display the ‘Loading’ widget. The other two states are possible after the future has resolved and it has either returned true or false. In case if true is returned by the future we will use the snapshot.data to display validCodeWidget or inValidCodeWidget in case if false is returned. 
+The validCodeWidget is just a container with a row as its child which contains a tick icon and text ‘Code Correct! Lets Play’.
+The inValidCodeWidget is also a similar widget with a cross icon and text ‘Can’t join your friend. Try again!’. 
+The Loading widget is is a container with a column that has text ‘Validating’ and a LinearProgressIndicator as its children. 
+ */
+                          (isJoinCodeSubmitted)
+                              ? FutureBuilder(
+                                  //if the isJoinCodeSubmitted is true then we will display the future builder instead of the join button
+                                  future: join(joinCode),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData) {
+                                      //if the future has returned true then we will display the validCodeWidget
+                                      if (snapshot.data == true) {
+                                        return Column(
+                                          children: [
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Icon(
+                                                  FluentIcons.checkmark_24_regular,
+                                                  color: Theme.of(context).colorScheme.primary,
+                                                ),
+                                                Text(
+                                                  'Code Correct! Lets Play',
+                                                  style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                          ],
+                                        );
+                                      }
+                                    }
+                                    if (snapshot.data == false) {
+                                      //if the future has returned false then we will display the inValidCodeWidget
+                                      return Column(
+                                        children: [
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                FluentIcons.dismiss_24_regular,
+                                                color: Theme.of(context).colorScheme.primary,
+                                              ),
+                                              Text(
+                                                'Can\'t join your friend!',
+                                                style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                                              ),
+                                            ],
+                                          ),
+                                          //create an outline text button to try again which sets the isJoinCodeSubmitted to false
+
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          OutlinedButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                isJoinCodeSubmitted = false;
+                                              });
+                                            },
+                                            child: Text(
+                                              'Try again',
+                                              style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    }
+                                    //if the future has not been resolved yet then we will display the loading widget
+                                    return Container(
+                                        child: Column(
+                                      children: [
+                                        const SizedBox(
+                                          height: 10,
                                         ),
-                                        CupertinoDialogAction(
-                                          child: Text('OK'),
-                                          onPressed: () {
-                                            int? inputNumber = int.tryParse(inputCode);
-                                            if (inputNumber != null && inputNumber >= 0 && inputNumber <= 9999) {
-                                              //if the inviter tries to enter the same intCode that he generated then display a snakebar that says 'Sorry! You cannot join yourself'
-                                              if (inputNumber == intCode) {
-                                                ScaffoldMessenger.of(context).showSnackBar(
-                                                  SnackBar(
-                                                    content: Text('Sorry! You cannot join yourself'),
-                                                    duration: Duration(seconds: 2),
-                                                  ),
-                                                );
-                                              } else {
-                                                //if the inviter enters a valid code then navigate to the game screen
-                                                Navigator.of(context).pop();
-                                                // Navigator.of(context).push(
-                                                //   MaterialPageRoute(
-                                                //     builder: (context) => GameScreen(
-                                                //       level: selectedLevel,
-                                                //       isMultiplayer: true,
-                                                //     ),
-                                                //   ),); //to be implemented
-                                              }
-                                            } else {
-                                              print('error in input');
-                                            }
-                                          },
+                                        Text(
+                                          'Validating',
+                                          style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        LinearProgressIndicator(),
+                                        const SizedBox(
+                                          height: 10,
                                         ),
                                       ],
+                                    ));
+                                  },
+                                )
+                              : ElevatedButton(
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return CupertinoAlertDialog(
+                                          //create a slow bounce in animation
+                                          insetAnimationCurve: Curves.easeInOutCubic,
+                                          insetAnimationDuration: Duration(milliseconds: 400),
+
+                                          title: Text(
+                                            'Enter a 4-digit code\n',
+                                            style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                                          ),
+                                          content: CupertinoTextField(
+                                            keyboardType: TextInputType.number,
+                                            maxLength: 4,
+                                            style:
+                                                TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 20),
+                                            onChanged: (value) {
+                                              inputCode = value;
+                                            },
+                                          ),
+                                          actions: <Widget>[
+                                            CupertinoDialogAction(
+                                              child: Text('Cancel'),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                            CupertinoDialogAction(
+                                              child: Text('OK'),
+                                              onPressed: () {
+                                                int? inputNumber = int.tryParse(inputCode);
+                                                if (inputNumber != null && inputNumber >= 0 && inputNumber <= 9999) {
+                                                  //if the inviter tries to enter the same intCode that he generated then display a snakebar that says 'Sorry! You cannot join yourself'
+                                                  if (inputNumber == intCode) {
+                                                    ScaffoldMessenger.of(context).showSnackBar(
+                                                      SnackBar(
+                                                        content: Text('Sorry! You cannot join yourself'),
+                                                        duration: Duration(seconds: 2),
+                                                      ),
+                                                    );
+                                                  } else {
+                                                    //if the inviter enters a valid code then navigate to the game screen
+                                                    Navigator.of(context).pop();
+                                                    joinCode = inputNumber;
+                                                    setState(() {
+                                                      isJoinCodeSubmitted = true;
+                                                    });
+                                                  }
+                                                } else {
+                                                  print('error in input');
+                                                }
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
                                     );
                                   },
-                                );
-                              },
-                              child: Text('Join')),
+                                  child: Text('Join')),
                         ],
                       ),
                     ],

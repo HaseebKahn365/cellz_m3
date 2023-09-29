@@ -803,5 +803,24 @@ Invitation Handeling:
 Now that we can handle the creation of the necessary document for the invitation we are now going to make some slight changes to better handle the wait process for the inviter. If the code is generated successfully then it would mean that we are good to wait for the joiner to join. But the waiting process needs to be proper for the inviter. After the code is generated, the alert dialogue box should pop automatically after 2 seconds and on the bottom sheet we are going to display a new Text widget that displays ‘(Waiting for your friend to enter 1234 in the join tab)’, this widget is displayed only if a state variable called isCodeGenerated ==true. Not only this, we will also disable the invite button using the same state variable. This way  we will indicate to the inviter that you are waiting for the joiner. In case if the inviter tries to pop the bottom sheet without being joined then we also need to delete the invitation document that was created in order to make sure that we don’t over-crowd the WaitingDocs collection.
 
 
+Joining Handeling:
+After the user submits the value in the 
+
+we need to create a  Future<bool> join(int intCode) async {} function that will be executed as the user submits the code in the alertdialogue box. The following is the logic inside the join() function:
+we first check if there exisits a document in the collection ‘WaitingDocs’ under the same uid as the intJoinCode entered by the joiner. If there exists such document then we are going to update the state of Bool isWaitingStatus  to false. This way the inviter will be notified that the joiner has joined the invitation and along with this we also need to upload the profile document of the joiner to the ‘Users’ collection.
+The following is the structure of the joiner document:
+Uid Of the Document: …
+Bool isInviter = false;
+String Name = ‘Name of the joiner’
+String imageUrl = ‘Image is Uploaded and its url is stored in here’;
+Int Score = 0;
+
+After the successful creation of the document we will return true. Otherwise in any case causing errors we will return false. These Boolean values are essential to display validCodeWidget or the invalidCodeWidget from the FutureBuilder.  The following details covers what the FutureBuilder in the join tab does:
+In the join tab we are gonna use a Boolean variable named isJoinCodeSubmitted to show the future builder widget or not. Inside the future builder we have three different states. One is the waiting state, this is the state when the future has not been resolved yet. In this case we will display the ‘Loading’ widget. The other two states are possible after the future has resolved and it has either returned true or false. In case if true is returned by the future we will use the snapshot.data to display validCodeWidget or inValidCodeWidget in case if false is returned. 
+The validCodeWidget is just a container with a row as its child which contains a tick icon and text ‘Code Correct! Lets Play’.
+The inValidCodeWidget is also a similar widget with a cross icon and text ‘Can’t join your friend. Try again!’. 
+The Loading widget is is a container with a column that has text ‘Validating’ and a LinearProgressIndicator as its children. 
+
+
 
 

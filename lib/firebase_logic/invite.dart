@@ -27,6 +27,7 @@ import 'package:flutter/services.dart';
 // Now lets implement the invite function:
 
 Future<bool> invite(int intCode, int level) async {
+  tempIntCode = intCode;
   //create a new document in the 'Users' Collection for the profile of the inviter
   //the document will have the following fields:
   // Uid Of the Document= current user’s uid;
