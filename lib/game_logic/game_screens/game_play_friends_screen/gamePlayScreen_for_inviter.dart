@@ -9,25 +9,42 @@ inviterRef = inviterDocUid
 joinerRef = current uid of the joiner
 Bool Turn = true(for the invitor’s turn) / false (for the  joiner’s turn)
 String  Move= ‘34’ (these two values indicate the points of the line drawn in this case allPoints[3] and allPoints[4])
-The above is just a representation of the fields. The initial values for the fields will be bool Turn = 0; and String Move = ‘’. After creation of the above document, we download the invitation document from which we will find the uid of the inviter and use it as an argument in the GameplayScreen(String inviterUid) we set the isWaiting to false and immediately navigate to the GameplayScreen(inviterUid). On this screen we will simply display the a text ‘Connected with ${inviterName}’. 
+The above is just a representation of the fields. The initial values for the fields will be bool Turn = 0; and String Move = ‘’. After creation of the above document, we download the invitation document from which we will find the uid of the inviter and use it as an argument in the GameplayScreenForInviter(String inviterUid) we set the isWaiting to false and immediately navigate to the GameplayScreenForInviter(inviterUid). On this screen we will simply display the a text ‘Connected with ${inviterName}’. 
 
 
 On the inviter side:
-on the inviter side we listen for any changes on the bottomSheet as soon as we observe a change in the bool isWaitingStatus, we will delete the invitation document and navigate to the GameplayScreen(String inviterUid
+on the inviter side we listen for any changes on the bottomSheet as soon as we observe a change in the bool isWaitingStatus, we will delete the invitation document and navigate to the GameplayScreenForInviter(String inviterUid
  */
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class GameplayScreen extends StatefulWidget {
-  const GameplayScreen({
+import '../play_with_friend_BSDesign.dart';
+
+class GameplayScreenForInviter extends StatefulWidget {
+  final String? inviterUid;
+  const GameplayScreenForInviter({
     Key? key,
+    required this.inviterUid,
   }) : super(key: key);
 
   @override
-  State<GameplayScreen> createState() => _GameplayScreenState();
+  State<GameplayScreenForInviter> createState() => _GameplayScreenForInviterState();
 }
 
-class _GameplayScreenState extends State<GameplayScreen> {
+class _GameplayScreenForInviterState extends State<GameplayScreenForInviter> {
+  //we are going to delete the invitation document in the intiState of the gameplay screen
+  @override
+  void initState() {
+    super.initState();
+    //delete the invitation document
+    // FirebaseFirestore.instance
+    //     .collection('WaitingDocs')
+    //     .doc(tempIntCode.toString())
+    //     .delete()
+    //     .then((value) => print('deleted the document with intCode = $tempIntCode because game has started'));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

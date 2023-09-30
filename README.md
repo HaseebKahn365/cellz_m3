@@ -837,3 +837,5 @@ The above is just a representation of the fields. The initial values for the fie
 On the inviter side:
 on the inviter side we listen for any changes on the bottomSheet as soon as we observe a change in the bool isWaitingStatus, we will delete the invitation document and navigate to the GameplayScreen(String inviterUid).
 
+
+

@@ -1,20 +1,14 @@
-/* Joining Handeling:
-After the user submits the value in the 
-
-we need to create a  Future<bool> join(int intCode) async {} function that will be executed as the user submits the code in the alertdialogue box. The following is the logic inside the join() function:
-we first check if there exisits a document in the collection ‘WaitingDocs’ under the same uid as the intJoinCode entered by the joiner. If there exists such document then we are going to update the state of Bool isWaitingStatus  to false. This way the inviter will be notified that the joiner has joined the invitation and along with this we also need to upload the profile document of the joiner to the ‘Users’ collection.
-The following is the structure of the joiner document:
-Uid Of the Document: …
-Bool isInviter = false;
-String Name = ‘Name of the joiner’
-String imageUrl = ‘Image is Uploaded and its url is stored in here’;
-Int Score = 0;
-
-After the successful creation of the document we will return true. Otherwise in any case causing errors we will return false. These Boolean values are essential to display validCodeWidget or the invalidCodeWidget from the FutureBuilder.  The following details covers what the FutureBuilder in the join tab does:
-In the join tab we are gonna use a Boolean variable named isJoinCodeSubmitted to show the future builder widget or not. Inside the future builder we have three different states. One is the waiting state, this is the state when the future has not been resolved yet. In this case we will display the ‘Loading’ widget. The other two states are possible after the future has resolved and it has either returned true or false. In case if true is returned by the future we will use the snapshot.data to display validCodeWidget or inValidCodeWidget in case if false is returned. 
-The validCodeWidget is just a container with a row as its child which contains a tick icon and text ‘Code Correct! Lets Play’.
-The inValidCodeWidget is also a similar widget with a cross icon and text ‘Can’t join your friend. Try again!’. 
-The Loading widget is is a container with a column that has text ‘Validating’ and a LinearProgressIndicator as its children. 
+/*On the joiner side:
+Now that we are able to validate the code entered by the joiner and creating the document for the joiner in the collection of ‘Users’ and changing the state of isWaitingStatus to false, we will now download the essential data from the invitation document before deleting it.
+We will store the inviter’s document uid in a String inviterDocUid and also store the Level in an Int Level. These values will be used in the main document for the game play, which is a document in the ‘GamePlayDocs’ collection.
+Now we create a document in the ‘GamePlayDocs’ collection in firestore which will be the main document where the actual game play between the players will happen. The following is the structure of the game play document:
+Uid Of the Document: ‘inviterDocUid+intCode’
+Int Level = storedLevel on joiner end
+inviterRef = inviterDocUid
+joinerRef = current uid of the joiner
+Bool Turn = true(for the invitor’s turn) / false (for the  joiner’s turn)
+String  Move= ‘34’ (these two values indicate the points of the line drawn in this case allPoints[3] and allPoints[4])
+The above is just a representation of the fields. The initial values for the fields will be bool Turn = 0; and String Move = ‘’. After creation of the above document, we will now delete the invitation document. 
  */
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -24,69 +18,80 @@ import 'package:flutter/services.dart';
 import '../main.dart';
 
 Future<bool> join(int intCode) async {
-  //we first check if there exisits a document in the collection ‘WaitingDocs’ under the same uid as the intJoinCode entered by the joiner. If there exists such document then we are going to update the state of Bool isWaitingStatus  to false. This way the inviter will be notified that the joiner has joined the invitation and along with this we also need to upload the profile document of the joiner to the ‘Users’ collection.
-  //The following is the structure of the joiner document:
-  //Uid Of the Document: …
-  //Bool isInviter = false;
-  //String Name = ‘Name of the joiner’
-  //String imageUrl = ‘Image is Uploaded and its url is stored in here’;
-  //Int Score = 0;
-
-  if (await FirebaseFirestore.instance
+  bool documentExists = await FirebaseFirestore.instance
       .collection('WaitingDocs')
       .doc(intCode.toString())
       .get()
-      .then((value) => value.exists)) {
-    //if the document exists then we will update the isWaitingStatus to false
+      .then((value) => value.exists);
 
-    try {
-      await FirebaseFirestore.instance.collection('WaitingDocs').doc(intCode.toString()).update({
-        'isWaitingStatus': false,
-      });
-    } catch (error) {
-      print('\nFailed to update the isWaitingStatus to false: $error\n');
-      return false;
+  if (documentExists) {
+    // Update isWaitingStatus to false
+    await FirebaseFirestore.instance.collection('WaitingDocs').doc(intCode.toString()).update({
+      'isWaitingStatus': false,
+    });
+
+    // Upload the profile image if available or use the default image
+    String? imageUrl;
+    if (imageFile != null) {
+      final ref = FirebaseStorage.instance.ref().child('user_profile_images').child(userUUID + '.jpg');
+      await ref.putFile(imageFile!);
+      imageUrl = await ref.getDownloadURL();
+    } else {
+      final ByteData data = await rootBundle.load('assets/images/profile.jpg');
+      final List<int> bytes = data.buffer.asUint8List();
+      final ref = FirebaseStorage.instance.ref().child('user_profile_images').child(userUUID + '.jpg');
+      await ref.putData(bytes as Uint8List);
+      imageUrl = await ref.getDownloadURL();
     }
 
-    //now we will upload the profile document of the joiner to the ‘Users’ collection.
-    try {
-      //upload the imageFile to firebase storage if it is not null otherwise upload assets/profile.jpg and put its url in a string variable
+    // Upload user document
+    await FirebaseFirestore.instance.collection('Users').doc(userUUID).set({
+      'isInviter': false,
+      'Name': userName,
+      'imageUrl': imageUrl,
+      'Score': 0,
+    });
+    print('user document created successfully');
 
-      String? imageUrl;
+    // Fetch data from invitation document
+    // String? inviterDocUid;
+    // int? storedLevel;
+    // final invitationDoc = await FirebaseFirestore.instance.collection('WaitingDocs').doc(intCode.toString()).get();
 
-      // Check if imageFile is null
-      if (imageFile != null) {
-        print('trying to upload imageFile');
-        final ref = FirebaseStorage.instance.ref().child('user_profile_images').child(userUUID + '.jpg');
-        await ref.putFile(imageFile!);
-        imageUrl = await ref.getDownloadURL();
-      } else {
-        // If imageFile is null, upload the default image from assets
-        print('trying to upload default');
-        final ByteData data = await rootBundle.load('assets/images/profile.jpg');
-        final List<int> bytes = data.buffer.asUint8List();
+    // inviterDocUid = invitationDoc.data()!['inviterDocUid'];
+    // storedLevel = invitationDoc.data()!['Level'];
 
-        final ref = FirebaseStorage.instance.ref().child('user_profile_images').child(userUUID + '.jpg');
-        await ref.putData(bytes as Uint8List);
-        imageUrl = await ref.getDownloadURL();
-      }
+    // print('inviterDocUid: $inviterDocUid and storedLevel: $storedLevel');
 
-      //now we will upload the profile document of the joiner to the ‘Users’ collection.
-      await FirebaseFirestore.instance.collection('Users').doc(userUUID).set({
-        'isInviter': false,
-        'Name': userName,
-        'imageUrl': imageUrl,
-        'Score': 0,
-      });
-    } catch (error) {
-      print('\nFailed to upload the profile document of the joiner to the ‘Users’ collection: $error\n');
-      return false;
-    }
+    // await FirebaseFirestore.instance.collection('GamePlayDocs').doc(inviterDocUid! + intCode.toString()).set({
+    //   'Level': storedLevel,
+    //   'inviterRef': inviterDocUid,
+    //   'joinerRef': userUUID,
+    //   'Turn': true,
+    //   'Move': '',
+    //   'intCode': intCode.toString(),
+    // });
+    // print('gameplay document created successfully');
 
-    //if everything is successful then we will return true
     return true;
+
+    //the following code seem to run repeatedly and cause problems so we will take care of the following things in the game screen itself
+
+    // print('inviterDocUid: $inviterDocUid and storedLevel: $storedLevel');
+
+    // // Create gameplay document
+    // print('inviterDocUid: $inviterDocUid and storedLevel: $storedLevel');
+
+    // // Delete the invitation document
+    // await FirebaseFirestore.instance.collection('WaitingDocs').doc(intCode.toString()).delete();
+    // print('invitation document deleted successfully');
+
+    // //set the documentExists to false
+    // documentExists = false;
+    // print('setting documentExists to false');
+
+    // return true;
   } else {
-    //if the document does not exist then we will return false
     return false;
   }
 }

@@ -3,6 +3,7 @@
 import 'dart:math';
 
 import 'package:cellz_m3/game_logic/lists_of_objects.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,8 @@ import 'package:flutter/material.dart';
 import '../../firebase_logic/invite.dart';
 import '../../firebase_logic/join.dart';
 import '../game_classes/unlocked_experience.dart';
+import 'game_play_friends_screen/gamePlayScreen_for_inviter.dart';
+import 'game_play_friends_screen/gamePlayScreen_for_joiner.dart';
 
 //this is a page with tab views to invite a friend or join a friend
 
@@ -209,34 +212,7 @@ class _PlayOrJoinState extends State<PlayOrJoin> {
 
                               //make sure to display 'Waiting' as label if the code is generated
                               child: isCodeGenerated
-                                  ? Column(
-                                      children: [
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        Text(
-                                          'Waiting...',
-                                          style: TextStyle(color: Theme.of(context).colorScheme.primary),
-                                        ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                                          child: LinearProgressIndicator(),
-                                        ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        Text(
-                                          '(Ask your friend to enter $intCode in the join tab)',
-                                          style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 10),
-                                        ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                      ],
-                                    )
+                                  ? StreamListenerforIsWaitingStatus(intCode: intCode)
                                   : Text('Invite Friend'),
                             ),
                           ),
@@ -274,29 +250,16 @@ The Loading widget is is a container with a column that has text â€˜Validatingâ€
                                     if (snapshot.hasData) {
                                       //if the future has returned true then we will display the validCodeWidget
                                       if (snapshot.data == true) {
-                                        return Column(
-                                          children: [
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                Icon(
-                                                  FluentIcons.checkmark_24_regular,
-                                                  color: Theme.of(context).colorScheme.primary,
-                                                ),
-                                                Text(
-                                                  'Code Correct! Lets Play',
-                                                  style: TextStyle(color: Theme.of(context).colorScheme.primary),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                          ],
-                                        );
+                                        //Navigate to the gameplay screen
+                                        Future.delayed(Duration(seconds: 2), () {
+                                          Navigator.of(context).pop();
+                                          Navigator.of(context).push(MaterialPageRoute(
+                                              builder: (context) => GameplayScreenForJoiner(
+                                                    inviterUid: joinCode.toString(),
+                                                  )));
+                                        });
+
+                                        return ConnectionEstablishedByJoiner();
                                       }
                                     }
                                     if (snapshot.data == false) {
@@ -352,7 +315,10 @@ The Loading widget is is a container with a column that has text â€˜Validatingâ€
                                         const SizedBox(
                                           height: 10,
                                         ),
-                                        LinearProgressIndicator(),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                          child: LinearProgressIndicator(),
+                                        ),
                                         const SizedBox(
                                           height: 10,
                                         ),
@@ -432,6 +398,123 @@ The Loading widget is is a container with a column that has text â€˜Validatingâ€
           ),
         ],
       )),
+    );
+  }
+}
+
+class ConnectionEstablishedByJoiner extends StatelessWidget {
+  const ConnectionEstablishedByJoiner({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(
+          height: 10,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              FluentIcons.checkmark_24_regular,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            Text(
+              'Code Correct! Lets Play',
+              style: TextStyle(color: Theme.of(context).colorScheme.primary),
+            ),
+          ],
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+      ],
+    );
+  }
+}
+
+class StreamListenerforIsWaitingStatus extends StatefulWidget {
+  const StreamListenerforIsWaitingStatus({
+    super.key,
+    required this.intCode,
+  });
+
+  final int intCode;
+
+  @override
+  State<StreamListenerforIsWaitingStatus> createState() => _StreamListenerforIsWaitingStatusState();
+}
+
+class _StreamListenerforIsWaitingStatusState extends State<StreamListenerforIsWaitingStatus> {
+  /*
+  On the inviter side:
+on the inviter side we listen for any changes on the bottomSheet using streamBuilder as soon as we observe a change in the bool isWaitingStatus, we will delete the invitation document and navigate to the GameplayScreen(String inviterUid).
+
+  
+   */
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(
+          height: 10,
+        ),
+        Text(
+          'Waiting...',
+          style: TextStyle(color: Theme.of(context).colorScheme.primary),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        // Padding(
+        //   padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        //   child: LinearProgressIndicator(),
+        // ),
+        //here we will create a stream builder to listen for any changes in the isWaitingStatus
+        //we will return a linear progress indicator if the isWaitingStatus is true otherwise if false we will return a text widget that says 'Your friend has joined the invitation'
+        //and after 2 seconds we will navigate to the gameplay screen
+
+        StreamBuilder(
+          stream: FirebaseFirestore.instance.collection('WaitingDocs').doc(widget.intCode.toString()).snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              if (snapshot.data!['isWaitingStatus'] == false) {
+                print('isWaitingStatus is false: now we will navigate to the gameplay screen');
+                Future.delayed(Duration(seconds: 2), () {
+                  Navigator.of(context).pop();
+
+                  //got to the gameplay screen
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => GameplayScreenForInviter(
+                            inviterUid: snapshot.data!['inviterDocUid'],
+                          )));
+                  //we will delete the invitation document from the waitingDocs after we navigate to the gameplay screen
+                });
+                return Text(
+                  'Connection Established!',
+                  style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                );
+              } else {
+                return LinearProgressIndicator();
+              }
+            }
+            return LinearProgressIndicator();
+          },
+        ),
+
+        const SizedBox(
+          height: 10,
+        ),
+        Text(
+          '(Ask your friend to enter ${widget.intCode} in the join tab)',
+          style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 10),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+      ],
     );
   }
 }

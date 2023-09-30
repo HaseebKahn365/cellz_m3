@@ -92,7 +92,8 @@ Future<bool> invite(int intCode, int level) async {
       'Uid Of the Document': intCode,
       'Level': level,
       'isWaitingStatus': true,
-      'inviterDocUid': FirebaseAuth.instance.currentUser?.uid,
+      //set the inviter uid to userUUID
+      'inviterDocUid': userUUID,
       'createdAt': Timestamp.now(),
     });
 

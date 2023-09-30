@@ -1,43 +1,46 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
-import 'package:flutter/material.dart';
+/*
+On the joiner side:
+Now that we are able to validate the code entered by the joiner, we create a document in the ‘GamePlayDocs’ collection in firestore which will be the main document where the actual game play between the players will happen. The following is the structure of the game play document:
+Uid Of the Document: ‘inviterDocUid+intCode’
+Int Level = storedLevel on joiner end
+inviterRef = inviterDocUid
+joinerRef = current uid of the joiner
+Bool Turn = true(for the invitor’s turn) / false (for the  joiner’s turn)
+String  Move= ‘34’ (these two values indicate the points of the line drawn in this case allPoints[3] and allPoints[4])
+The above is just a representation of the fields. The initial values for the fields will be bool Turn = 0; and String Move = ‘’. After creation of the above document, we download the invitation document from which we will find the uid of the inviter and use it as an argument in the GameplayScreenForJoiner(String inviterUid) we set the isWaiting to false and immediately navigate to the GameplayScreenForJoiner(inviterUid). On this screen we will simply display the a text ‘Connected with ${inviterName}’. 
 
-//create a basic page with scaffold and a center widget
 
-/*Uniform UI for the gameplay: 
-The UI for the gameplay is should be  simple. For now we are gonna just integrate the basic ui where both the players will be able to see their names profile images, and their current scores all inside rounded-cornered containers. Circular avatars will also have a border composed of the circular progress indicator. The circular progress indicator will update its value starting from filled to empty. Something like this:
-// Define a variable to hold the timer value
-int _timerValue = 20;
-
-// Define a function to update the timer value every second
-void _startTimer() {
-  Timer.periodic(Duration(seconds: 1), (timer) {
-    setState(() {
-      if (_timerValue > 0) {
-        _timerValue--; // Decrease the timer value every second
-      } else {
-        timer.cancel(); // Stop the timer when it reaches zero
-      }
-    });
-  });
-}
-
-// Wrap the CircularProgressIndicator with a SizedBox to set its size
-SizedBox(
-  width: 50,
-  height: 50,
-  child: CircularProgressIndicator(
-    value: 1-(_timerValue / 20), // Set the value of the CircularProgressIndicator based on the timer value
-  ),
-);
-
-// Call _startTimer function to start the timer
-_startTimer();
- 
+On the inviter side:
+on the inviter side we listen for any changes on the bottomSheet as soon as we observe a change in the bool isWaitingStatus, we will delete the invitation document and navigate to the GameplayScreenForJoiner(String inviterUid
  */
 
-class PlayWithAi extends StatelessWidget {
-  const PlayWithAi({Key? key}) : super(key: key);
+import 'package:flutter/material.dart';
+
+class GameplayScreenForJoiner extends StatefulWidget {
+  final String? inviterUid;
+  const GameplayScreenForJoiner({
+    Key? key,
+    required this.inviterUid,
+  }) : super(key: key);
+
+  @override
+  State<GameplayScreenForJoiner> createState() => _GameplayScreenForJoinerState();
+}
+
+class _GameplayScreenForJoinerState extends State<GameplayScreenForJoiner> {
+  //we are going to delete the invitation document in the intiState of the gameplay screen
+  @override
+  void initState() {
+    super.initState();
+    //delete the invitation document
+    // FirebaseFirestore.instance
+    //     .collection('WaitingDocs')
+    //     .doc(tempIntCode.toString())
+    //     .delete()
+    //     .then((value) => print('deleted the document with intCode = $tempIntCode because game has started'));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +48,11 @@ class PlayWithAi extends StatelessWidget {
       appBar: AppBar(title: const Text('Leve: 1')),
       body: Center(
         child: Column(
-          children: [PlayersBox()],
+          children: [
+            PlayersBox(),
+            const SizedBox(height: 20),
+            Text('connected with: '),
+          ],
         ),
       ),
     );
@@ -66,7 +73,13 @@ class _PlayersBoxState extends State<PlayersBox> {
 
   @override
   Widget build(BuildContext context) {
-    return PlayersDetail();
+    return Column(
+      children: [
+        PlayersDetail(),
+        const SizedBox(height: 20),
+        Text('connected with: '),
+      ],
+    );
   }
 }
 

@@ -23,12 +23,12 @@ class ComponentScreen extends StatelessWidget {
               shrinkWrap: true,
               children: [
                 ...buildHomeButtons(context),
-                showNavBottomBar
-                    ? const NavigationBars(
-                        selectedIndex: 0,
-                        isExampleBar: true,
-                      )
-                    : Container(),
+                // showNavBottomBar
+                //     ? const NavigationBars(
+                //         selectedIndex: 0,
+                //         isExampleBar: true,
+                //       )
+                //     : Container(),
               ],
             ),
           ),
