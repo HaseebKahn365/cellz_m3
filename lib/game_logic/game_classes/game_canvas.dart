@@ -43,53 +43,53 @@ class GameCanvas {
         calculateMovesLeft();
         break;
       case 3:
-        numOfXPoints = 5;
+        numOfXPoints = 4;
         numOfYPoints = 6;
         createDots(numOfYPoints, numOfXPoints);
         calculateMovesLeft();
         break;
       case 4:
-        numOfXPoints = 6;
+        numOfXPoints = 4;
         numOfYPoints = 7;
         createDots(numOfYPoints, numOfXPoints);
         calculateMovesLeft();
 
         break;
       case 5:
-        numOfXPoints = 7;
+        numOfXPoints = 5;
         numOfYPoints = 8;
         createDots(numOfYPoints, numOfXPoints);
         calculateMovesLeft();
 
         break;
       case 6:
-        numOfXPoints = 8;
+        numOfXPoints = 5;
         numOfYPoints = 9;
         createDots(numOfYPoints, numOfXPoints);
         calculateMovesLeft();
 
         break;
       case 7:
-        numOfXPoints = 9;
+        numOfXPoints = 6;
         numOfYPoints = 10;
         createDots(numOfYPoints, numOfXPoints);
         calculateMovesLeft();
 
         break;
       case 8:
-        numOfXPoints = 10;
+        numOfXPoints = 6;
         numOfYPoints = 11;
         break;
       case 9:
         numOfXPoints = 11;
-        numOfYPoints = 12;
+        numOfYPoints = 11;
         createDots(numOfYPoints, numOfXPoints);
         calculateMovesLeft();
 
         break;
       case 10:
-        numOfXPoints = 12;
-        numOfYPoints = 13;
+        numOfXPoints = 7;
+        numOfYPoints = 12;
         createDots(numOfYPoints, numOfXPoints);
         calculateMovesLeft();
 
@@ -110,5 +110,3 @@ class GameCanvas {
     return 'GameCanvas(numOfXPoints: $numOfXPoints, numOfYPoints: $numOfYPoints, isGameOver: $isGameOver, movesLeft: $movesLeft, level: $level)';
   }
 }
-
-

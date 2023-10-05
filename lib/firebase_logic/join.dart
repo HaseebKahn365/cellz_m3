@@ -33,13 +33,13 @@ Future<bool> join(int intCode) async {
     // Upload the profile image if available or use the default image
     String? imageUrl;
     if (imageFile != null) {
-      final ref = FirebaseStorage.instance.ref().child('user_profile_images').child(userUUID + '.jpg');
+      final ref = FirebaseStorage.instance.ref().child('user_profile_images').child('$userUUID.jpg');
       await ref.putFile(imageFile!);
       imageUrl = await ref.getDownloadURL();
     } else {
       final ByteData data = await rootBundle.load('assets/images/profile.jpg');
       final List<int> bytes = data.buffer.asUint8List();
-      final ref = FirebaseStorage.instance.ref().child('user_profile_images').child(userUUID + '.jpg');
+      final ref = FirebaseStorage.instance.ref().child('user_profile_images').child('$userUUID.jpg');
       await ref.putData(bytes as Uint8List);
       imageUrl = await ref.getDownloadURL();
     }
@@ -89,6 +89,8 @@ Future<bool> join(int intCode) async {
     // //set the documentExists to false
     // documentExists = false;
     // print('setting documentExists to false');
+
+    
 
     // return true;
   } else {
