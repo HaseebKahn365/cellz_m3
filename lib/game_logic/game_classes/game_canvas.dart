@@ -5,13 +5,11 @@ class GameCanvas {
   int numOfXPoints = 0; // number of points on the x axis.
   int numOfYPoints = 0; // number of points on the y axis.
   static bool isGameOver = false; // toCheck if the game is over or not
-  bool isMyTurn = true; //to control the touch events
-  static int movesLeft =
-      0; // to check how many moves are left. Todo: this must be assigned the value of caculateMovesLeft() function. soon after declaring the object of this class.
+  // to check how many moves are left. Todo: this must be assigned the value of caculateMovesLeft() function. soon after declaring the object of this class.
   int level;
   // to check the level of the game. Todo: this must be assigned the value of caculateMovesLeft() function. soon after declaring the object of this class.
-  void calculateMovesLeft() {
-    GameCanvas.movesLeft = (this.numOfXPoints - 1) * this.numOfYPoints + (this.numOfYPoints - 1) * this.numOfXPoints;
+  int calculateMovesLeft() {
+    return (this.numOfXPoints - 1) * this.numOfYPoints + (this.numOfYPoints - 1) * this.numOfXPoints;
   }
 
   static void createDots(int xCount, int yCount) {
@@ -101,12 +99,16 @@ class GameCanvas {
     }
   }
 
+  //lets call the switch in the constructor
+
   GameCanvas({
     required this.level,
-  });
+  }) {
+    levelSwitchCase(level);
+  }
 
   @override
   String toString() {
-    return 'GameCanvas(numOfXPoints: $numOfXPoints, numOfYPoints: $numOfYPoints, isGameOver: $isGameOver, movesLeft: $movesLeft, level: $level)';
+    return 'GameCanvas(numOfXPoints: $numOfXPoints, numOfYPoints: $numOfYPoints, isGameOver: $isGameOver, level: $level)';
   }
 }

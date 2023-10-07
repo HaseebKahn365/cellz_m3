@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:cellz_m3/game_logic/game_classes/game_canvas.dart';
 import 'package:cellz_m3/game_logic/game_classes/unlocked_experience.dart';
 import 'package:cellz_m3/main.dart';
 import 'package:flutter/material.dart';
@@ -82,11 +83,33 @@ class GameStateVariables {
   bool isMyTurn = true;
   String myName = userName;
   String hisName = 'Dynamic Ai';
+  GameCanvas gameCanvas = GameCanvas(level: 1); //this is just for init
 
-  GameStateVariables({required this.hisScore, required this.myScore, required this.isMyTurn});
+  GameStateVariables({required this.hisScore, required this.myScore, required this.isMyTurn}) {
+    int level = gameLevelFinder();
+    gameCanvas = GameCanvas(level: level);
+  }
+
+  int gameLevelFinder() {
+    List<UnlockedExperience> allUnlockedExperiences =
+        unlockedExperienceList.where((element) => element.isUnlocked == true).toList();
+    int level = allUnlockedExperiences.length;
+    return level;
+  }
+
+  //Working on P1C0P2
+  // taking an instance of game canvas as a member
+
+  //creating a method to reset the global lists of points, lines, after the game is over
+
+  void resetGame() {
+    allLines = [];
+    allPoints = [];
+    allUsedPoints = [];
+  }
 }
 
-var gameStateVariables;
+dynamic gameStateVariables;
 //creating an instance of the class
 
 class PlayWithAi extends StatefulWidget {
@@ -102,9 +125,6 @@ class _PlayWithAiState extends State<PlayWithAi> {
   //lets override the back button to make sure that user doesn't leave the game accidently
   @override
   Widget build(BuildContext context) {
-    List<UnlockedExperience> allUnlockedExperiences =
-        unlockedExperienceList.where((element) => element.isUnlocked == true).toList();
-    int level = allUnlockedExperiences.length;
     return WillPopScope(
       onWillPop: () async {
         return (await showDialog(
@@ -127,7 +147,24 @@ class _PlayWithAiState extends State<PlayWithAi> {
             false;
       },
       child: Scaffold(
-        appBar: AppBar(title: Text('Level: ${level}')),
+        appBar: AppBar(
+          title: Text('Level: ${gameStateVariables.gameCanvas.level.toString()}'),
+          //in the actions we will display the moves left
+          actions: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Row(
+                children: [
+                  Text('Moves Left :  '),
+                  Text(
+                    gameStateVariables.gameCanvas.calculateMovesLeft().toString(),
+                    style: TextStyle(fontSize: 21),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
         body: Center(
           child: Column(
             children: [
