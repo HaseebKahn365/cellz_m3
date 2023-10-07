@@ -24,7 +24,8 @@ List<Widget> buildHomeButtons(BuildContext context) {
         //elevated button with leading icon
         child: ElevatedButton.icon(
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const PlayWithAi()));
+            //navigate to the play with AI screen
+            Navigator.push(context, MaterialPageRoute(builder: (context) => PlayWithAi()));
           },
           icon: const Icon(
             FluentIcons.play_24_regular,

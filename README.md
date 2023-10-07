@@ -839,3 +839,108 @@ on the inviter side we listen for any changes on the bottomSheet as soon as we o
 
 
 
+Game Develepment stage right now:
+The “Cellz” game during its initial development times did not follow any Software Development model. Nevertheless, we did manage to get the UI ready for the game navigation and stats display. However, the game UI is still not ready and there is also the problem of feasibility within the time-constraint. The following  is a detailed analysis of game development using the waterfall model. I chose the water fall model because the requirement is specified, requiring no modification and feedback in the middle and the entire game will be developed in a single sequential attempt. The following phases specify the general over-view of the game development in the given time-constraint.
+Phases of Project:
+Feasibility:
+We only got like 5 days to finish the project. 
+The game logic is all ready and well-tested. Now we just need to develop the interface for the game and link it to the game’s logic to enable game interaction and responsiveness. 
+Requirements gathering and analysis:
+The “Cellz”, for now, is only planned to be implemented for the mobile. The requirements are clarified for the gameplay. The Naming scheme for the development of certain parts of the game are as follows:
+On the home screen of the Cellz we got three buttons i.e.,  “Play”, “Play with friend” and “offline”. This first  button “Play” and its functionality use the label of P1C0 (short for Phase 1 Chapter 0. It’s just a project-codename). Similarly for the other two buttons, we will use the code-names P1C1 and P1C2.
+P1C0:
+This part of the game is used for the user to play against the aiFunction().Once the user presses the “Play” button. This will cause the user to automatically navigate to the game screen and start playing at the highest level that he is at. He will be playing against the ai but we will make it appear like a human to make it more engaging. The aiFunction will be used to return lines as the opponent of the user. The aiFunction is an advanced function that is designed to return a line in a dynamic fashion according to the given scenarios that will be discussed here. 
+This mode will require internet just for formality because the game is already plaid locally. 
+Role of the aiFunction up to level 6: The aiFunction will always take about 1- 5 seconds randomly, to return a line. The aiFunction will return only lines for which the safeLines is true or finish the FirstMaxChain in case if available. The aiFunction() will not use the concept of second max chain and the doTrickShot() concept. The reason is that we gradually want to increase the difficulty as we go through the higher levels. 
+Role of the aiFunction in level 7 and 8: The aiFunction will get advanced in these levels being able to recognize the secondMaxChain and also be able to do the trick shots inside the first max chain. 
+Playing at level 9 and 10: The aiFunction will perform similar as above but the user will now have to score more than 60% to win in the level 9 and more than 75% in the level 10 to win against the ai. 
+After winning the game by scoring more than 50% (for levels up to 6), this will modify the global list of unlockedExperienceList thus allowing the user to be promoted to the newer levels after completing a level.
+P1C1:
+The “Play with friend” button will allow two users of the Cellz to connect via firebase and play against each other. This is done using encoding of a line as a string then broadcasting it as a string and once the player on the other end receives the string, he will be able to decode this line string. Once this new line is rendered the current user will create his own line and this line will then be broadcasted. And the game on the other end will respond accordingly.
+P1C2:
+The “Play with friend” button will allow the user to play with the ai in a straight forward fashion. In this mode the aiFunction will respond instantly. The profile for the ai player is pre-defined with the name: Artificial Intelligence and the profile pic from the assets folder. This mode will also not require any internet connection.
+Extra code-names P1C3 and P1C4:
+P1C3:
+This part of the Cellz is about the contributions. The concept of contribution is already implemented however we do need to connect the dailyContributionsList to firebase and also make it dynamic alongside the payment. We need to implement the payment service for the users to contribute. After the successful payment process, we must be able to update the UI accordingly.
+P1C4:
+This part of the game handles the Journey and the Patrios screen. These screens simply use the global lists i.e., unlockedExperienceList and dailyContributionsList. The data from these lists is used for the UI of the Journey and the Patrios screen respectively.
+SYSTEM DESIGN:
+The system design specifies the implementation details of the chapters that are discussed above in the form of pseudocode. The main chapters are further divided into parts that are denoted in the form of “P1C0P1”. This indicates the part 1 of the chapter 0. The following is the description of the chapters and its parts. 
+P1C0P1 to P1C0P6:
+Here, we will work on the entire UI and the state of the “Play” screen. Here the user is going to play with aiFunction which will be dynamic i.e., from Level 1 to Level 6, the aiFunction will use the bool “isMediocre” to know whether or not we need the aiFunction needs to do the trick shot or not. The following is the design of the “Play” screen.
+P1C0P1:
+In this part we initialize the variables to set the level in the appbar to the selected level. In the scaffold we will have two profiles. The first one is of the current user and the second one is that of the aiFunction. 
+
+We simply display the profile of the user and name for the first Player’s Container. But for the profile of ai we will randomly pick an image from list of URLs and names specified in the AiProfiles class.
+We will use state variables for the scores of the user as well as the controlling the Shifting colors of the container and for returning an animated circular container in case of the current players turn.
+
+we will also override the popping of the back button to make sure that the user really  wants to exit the game. 
+
+P1C0P2:
+Point representation:
+There will be a canvasContainer in the middle that will contain a stack widget with its first widget of the stack being the gridview for the allPoints where each point has a gesture detector allowing the user to pan and create line. 
+The point object has four Boolean control states. These states are as:
+isUntouched: This boolean member of the point will be used to make the point appear like an outlined circle thus indication that the point is not used yet. 
+isSelected: This boolean member of the point will be used to make the point appear like a filled circle but its radius will be larger that the normal point. 
+isMarked: This boolean member of the point will be used to make the point appear like a filled circle of normal radius. 
+isDisabled: This boolean is used to indicate that whether or not the point is disabled. This member is not going to be used for any UI but it will be used to ignore the gesture detector the point that is disabled. A disabled point is a point that is present four times in the allUsedPoints list.
+Line  representation:
+The second widget of the stack will be a gridview for lines that will be used to return linear progress indicators for representing the lines. The new line which gets created will be animated using LinearProgressIndicator widget. 
+Square  representation:
+The third widget of the stack will be a gridview for squares. To calculate the number of squares we will use the following algorithm: no. of squares = (no. of XPoints – 1) * (no. of YPoints – 1). The number of squares will be used  in the gridview for creating the number of squares. 
+P1C0P3:
+This part of the game contains the createPoints function which is responsible for the creation of points UI. It works by returning a Container with a gesture detector for the gridview. The offset Analyzer is called after the drag detection by point. The offset Analyzer uses two offset objects to create the proper line. After the Line is created using the createLine method the checkSquare method is called for the detection of squares. 
+P1C0P3:
+UpdateUI:
+This method is called to update the states variables and make the changes visible on the game canvas by calling the setState on the local variables so that the scores and widgets may update. 
+SwtichTurn:
+This method is called after the update of the UI to switch the turn to the other player. This causes to make the gesture detector of the points for current users useless and unresponsive.
+createLine(aiFunction()):
+This is called after the player has already done his move. This causes the line to be created after the aiFunction returns the line.
+P1C1P1 to P1C1P4:
+This part of the game focuses on the development of the game play for the two users that will be connected via Firebase. The code for the players’ connection has already been implemented now we need to implement the state-management and data transfer via Firebase to both inviter and the joiner. 
+Inviter-side Logic:
+P1C1P1:
+On the inviter side we will first initialize the local variables from the firestore’s game play document. After this we will delete the inviter’s document. Then after first move is done on the inviter’s side, we will do the work explained as follows:
+P1C1P2:
+We will then update the UI and encode the line in a string variable and update the string representing the line in the firestore. 
+P1C1P3:
+we will switch the turn and inform the joiner using stream builder on the joiner’s side. 
+Now on the inviter’s side we will listen for changes in the turn value of the firestore’s game play document using stream Builder and once it is the inviter’s turn the gesture detector will be enabled again.
+
+Joiner-side Logic:
+P1C1P4:
+On the joiner’s side we will decode the string representing the line and pass it to the createLine function. Thus, creating the line and also checking for the squares. After this the joiner will make his move and after creating the line, we will update the UI and encode the line in a string variable and update the string representing the line in the firestore. And so the game will be played
+P1C1P4:
+We will also calculate the created line and when the remaining moves are 0 we will display an Alert Dialogue box after navigating to the Home screen. This is not the only way to win. In case if the 20 seconds passes without the creation of any lines we will also do the same and return an AlertDialogue  box for losing the game.
+
+P1C2P1 to P1C2P2:
+The Play offline screen:
+On this screen, we will use most of the above logic with only the following two basic changes:
+P1C2P1:
+We will load the profile using the profile image in the assets folder and also give a name “AI”.
+P1C2P2:
+We will call the aiFunction for creating line with the isMediocre set to true. The game play is pretty similar to the aiFunction.
+
+P1C3P1 to P1C3P2:
+The Contributions Screen:
+P1C3P1:
+We will implement the google pay for the android version of the app and if the platform is Ios we will implement the apple pay. There will be three payment selection options of 1$ , 5$ and 10$.
+P1C3P2:
+After the payment  we will update the document in the firestore that contains the details of the contributions. However, the changes will be visible to the users who reopen the Cellz app. This is because the data for the Contributions screen is only downloaded in the init method of myApp widget. 
+
+
+
+P1C4P1:
+The Journey and Patrios Screen:
+P1C3P1:
+Updating the data on the Journey and Patrios screen in done in the part of the development. We simply have to load the data from the following lists:
+List<UnlockedExperience> unlockedExperienceList = [];
+ 
+//create a list of daily contributions class
+
+List<DailyContributions> dailyContributionsList = [];
+ 
+Now that the system requirements for the Cellz game are specified, we are now going to implement the game using the waterfall model. Lets start coding!
+
+
