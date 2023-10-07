@@ -6,6 +6,9 @@ List allPoints = <Points>[];
 
 List<Lines> allLines = [];
 
+//the following list will contain all the points that are used to draw the lines. we will check if the same point is present four times then it will be marked disabled. we will use this property to ignore the gesture detector on the point
+List<Points> allUsedPoints = [];
+
 //create a list of unlocked Experience class with a max size of 10
 
 List<UnlockedExperience> unlockedExperienceList = [];
