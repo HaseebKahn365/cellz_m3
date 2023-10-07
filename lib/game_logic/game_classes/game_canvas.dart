@@ -79,7 +79,7 @@ class GameCanvas {
         numOfYPoints = 11;
         break;
       case 9:
-        numOfXPoints = 11;
+        numOfXPoints = 6;
         numOfYPoints = 11;
         createDots(numOfYPoints, numOfXPoints);
         calculateMovesLeft();

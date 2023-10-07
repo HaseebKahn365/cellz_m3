@@ -53,7 +53,7 @@ void initLists() {
     totalScore: 312,
     experience: 'High',
     gamesPlayed: 32,
-    isUnlocked: true,
+    isUnlocked: false,
   ));
 
   for (var i = 4; i < 10; i++) {

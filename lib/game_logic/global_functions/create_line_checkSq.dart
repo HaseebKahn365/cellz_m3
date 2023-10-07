@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import '../game_classes.dart';
 import '../lists_of_objects.dart';
 
@@ -87,10 +89,6 @@ checkSquare(Lines newLine) {
         });
 
         humanPlayer.incrementScore();
-
-        if (GameCanvas.movesLeft == 0) {
-          print('out of moves. Game Over');
-        }
       }
 
       //checking for the square above the newLine becuase origin point in in the top left corner and y increases downwards
@@ -124,8 +122,6 @@ checkSquare(Lines newLine) {
         print('we have detected a sqaure, I repeat. a square above the newLine\n');
 
         humanPlayer.incrementScore();
-
-        if (GameCanvas.movesLeft == 0) {}
       }
 
       break;
@@ -157,8 +153,6 @@ checkSquare(Lines newLine) {
         print('we have detected a sqaure, I repeat. a square on the left side of the newLine\n');
 
         humanPlayer.incrementScore();
-
-        if (GameCanvas.movesLeft == 0) {}
       }
 
       //After checking for the square above, we are going to check for the square on the right side of 	the newLine in 	the same manner as above
@@ -187,8 +181,6 @@ checkSquare(Lines newLine) {
         print('we have detected a sqaure, I repeat. a square on the right side of the newline\n');
 
         humanPlayer.incrementScore();
-
-        if (GameCanvas.movesLeft == 0) {}
       }
 
       break;
@@ -326,13 +318,4 @@ bool offsetAnalyzer(Offset P1, Offset Q1, Points currentPoint) {
     }
   }
   return false;
-}
-
-//create a fake offset class that only has the essential components to test the above code:
-
-class Offset {
-  final double dx;
-  final double dy;
-
-  Offset({required this.dx, required this.dy});
 }

@@ -12,11 +12,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 import 'firebase_options.dart';
+import 'game_logic/game_screens/play_with_ai.dart';
 import 'home.dart';
 import 'patrios.dart';
 import 'journey.dart';
 
 const uuid = Uuid();
+dynamic gameStateVariables;
 late String userUUID;
 void main() async {
   userUUID = uuid.v1().toString();
@@ -26,6 +28,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   initLists();
+  gameStateVariables = GameStateVariables(hisScore: 0, myScore: 0, isMyTurn: true);
   runApp(const CellzM3());
 }
 

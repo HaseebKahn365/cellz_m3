@@ -38,8 +38,7 @@ void aiFunction() {
   }
 
   print('toatl lines length is ${totalLines.length}');
-  print(GameCanvas
-      .movesLeft); //test passed: the totalLines list is created properly and the length is 31 which is correct. this is becuase we have 4Xpoints and 5Ypoints and the total number of lines is 5*3 + 4*4 = 31
+  //test passed: the totalLines list is created properly and the length is 31 which is correct. this is becuase we have 4Xpoints and 5Ypoints and the total number of lines is 5*3 + 4*4 = 31
 //making sure that all the lines in the totalLines list are correct and valid.
 
   // for (int i = 0; i < totalLines.length; i++) {

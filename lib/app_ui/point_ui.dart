@@ -7,11 +7,11 @@ import '../game_logic/game_classes.dart';
 Widget PointUi(Points P) {
   if (P.isDisabled == true) {
     return Container(
-      height: 40,
+      height: 5,
       color: Colors.deepPurple[100],
       child: Container(
-        width: 10,
-        height: 10,
+        width: 2,
+        height: 2,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: Colors.deepPurple[400],
@@ -20,11 +20,11 @@ Widget PointUi(Points P) {
     );
   } else if (P.isMarked == true) {
     return Container(
-      height: 40,
+      height: 5,
       color: Colors.deepPurple[100],
       child: Container(
-        width: 10,
-        height: 10,
+        width: 2,
+        height: 2,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: Colors.deepPurple[500],
@@ -33,11 +33,11 @@ Widget PointUi(Points P) {
     );
   } else if (P.isSelected == true) {
     return Container(
-      height: 40,
+      height: 5,
       color: Colors.deepPurple[100],
       child: Container(
-        width: 10,
-        height: 10,
+        width: 2,
+        height: 2,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: Colors.deepPurple,
@@ -46,11 +46,11 @@ Widget PointUi(Points P) {
     );
   } else if (P.isUntouched == true) {
     return Container(
-      height: 40,
+      height: 5,
       color: Colors.deepPurple[100],
       child: Container(
-        width: 10,
-        height: 10,
+        width: 2,
+        height: 2,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(

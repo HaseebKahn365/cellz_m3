@@ -2,92 +2,29 @@
 
 import 'dart:io';
 
-import 'package:cellz_m3/game_logic/game_classes/game_canvas.dart';
+import 'package:cellz_m3/game_logic/game_classes.dart';
+
 import 'package:cellz_m3/game_logic/game_classes/unlocked_experience.dart';
 import 'package:cellz_m3/main.dart';
 import 'package:flutter/material.dart';
 
+import '../../app_ui/point_ui.dart';
+import '../global_functions/create_line_checkSq.dart';
 import '../lists_of_objects.dart';
 
-// P1C0P1:
-// In this part we initialize the variables to set the level in the appbar to the selected level. In the scaffold we will have two profiles. The first one is of the current user and the second one is that of the aiFunction.
-
-// We simply display the profile of the user and name for the first Player’s Container. But for the profile of ai we will randomly pick an image from list of URLs and names specified in the AiProfiles class.
-// We will use state variables for the scores of the user as well as the controlling the Shifting colors of the container and for returning an animated circular container in case of the current players turn.
-
-// we will also override the popping of the back button to make sure that the user really  wants to exit the game.
-
-// P1C0P2:
-// Point representation:
-// There will be a canvasContainer in the middle that will contain a stack widget with its first widget of the stack being the gridview for the allPoints where each point has a gesture detector allowing the user to pan and create line.
-// The point object has four Boolean control states. These states are as:
-// isUntouched: This boolean member of the point will be used to make the point appear like an outlined circle thus indication that the point is not used yet.
-// isSelected: This boolean member of the point will be used to make the point appear like a filled circle but its radius will be larger that the normal point.
-// isMarked: This boolean member of the point will be used to make the point appear like a filled circle of normal radius.
-// isDisabled: This boolean is used to indicate that whether or not the point is disabled. This member is not going to be used for any UI but it will be used to ignore the gesture detector the point that is disabled. A disabled point is a point that is present four times in the allUsedPoints list.
-// Line  representation:
-// The second widget of the stack will be a gridview for lines that will be used to return linear progress indicators for representing the lines. The new line which gets created will be animated using LinearProgressIndicator widget.
-// Square  representation:
-// The third widget of the stack will be a gridview for squares. To calculate the number of squares we will use the following algorithm: no. of squares = (no. of XPoints – 1) * (no. of YPoints – 1). The number of squares will be used  in the gridview for creating the number of squares.
-// P1C0P3:
-// This part of the game contains the createPoints function which is responsible for the creation of points UI. It works by returning a Container with a gesture detector for the gridview. The offset Analyzer is called after the drag detection by point. The offset Analyzer uses two offset objects to create the proper line. After the Line is created using the createLine method the checkSquare method is called for the detection of squares.
-// P1C0P3:
-// UpdateUI:
-// This method is called to update the states variables and make the changes visible on the game canvas by calling the setState on the local variables so that the scores and widgets may update.
-// SwtichTurn:
-// This method is called after the update of the UI to switch the turn to the other player. This causes to make the gesture detector of the points for current users useless and unresponsive.
-// createLine(aiFunction()):
-// This is called after the player has already done his move. This causes the line to be created after the aiFunction returns the line.
-// P1C1P1 to P1C1P4:
-// This part of the game focuses on the development of the game play for the two users that will be connected via Firebase. The code for the players’ connection has already been implemented now we need to implement the state-management and data transfer via Firebase to both inviter and the joiner.
-// Inviter-side Logic:
-// P1C1P1:
-// On the inviter side we will first initialize the local variables from the firestore’s game play document. After this we will delete the inviter’s document. Then after first move is done on the inviter’s side, we will do the work explained as follows:
-// P1C1P2:
-// We will then update the UI and encode the line in a string variable and update the string representing the line in the firestore.
-// P1C1P3:
-// we will switch the turn and inform the joiner using stream builder on the joiner’s side.
-// Now on the inviter’s side we will listen for changes in the turn value of the firestore’s game play document using stream Builder and once it is the inviter’s turn the gesture detector will be enabled again.
-
-// Joiner-side Logic:
-// P1C1P4:
-// On the joiner’s side we will decode the string representing the line and pass it to the createLine function. Thus, creating the line and also checking for the squares. After this the joiner will make his move and after creating the line, we will update the UI and encode the line in a string variable and update the string representing the line in the firestore. And so the game will be played
-// P1C1P4:
-// We will also calculate the created line and when the remaining moves are 0 we will display an Alert Dialogue box after navigating to the Home screen. This is not the only way to win. In case if the 20 seconds passes without the creation of any lines we will also do the same and return an AlertDialogue  box for losing the game.
-
-// P1C2P1 to P1C2P2:
-// The Play offline screen:
-// On this screen, we will use most of the above logic with only the following two basic changes:
-// P1C2P1:
-// We will load the profile using the profile image in the assets folder and also give a name “AI”.
-// P1C2P2:
-// We will call the aiFunction for creating line with the isMediocre set to true. The game play is pretty similar to the aiFunction.
-
-// P1C3P1 to P1C3P2:
-// The Contributions Screen:
-// P1C3P1:
-// We will implement the google pay for the android version of the app and if the platform is Ios we will implement the apple pay. There will be three payment selection options of 1$ , 5$ and 10$.
-// P1C3P2:
-// After the payment  we will update the document in the firestore that contains the details of the contributions. However, the changes will be visible to the users who reopen the Cellz app. This is because the data for the Contributions screen is only downloaded in the init method of myApp widget.
-
-// P1C4P1:
-// The Journey and Patrios Screen:
-// P1C3P1:
-// Updating the data on the Journey and Patrios screen in done in the part of the development. We simply have to load the data from the following lists:
-// List<UnlockedExperience> unlockedExperienceList = [];
-
-//Working on P1C0P1
 class GameStateVariables {
   int hisScore = 0;
   int myScore = 0;
   bool isMyTurn = true;
   String myName = userName;
   String hisName = 'Dynamic Ai';
-  GameCanvas gameCanvas = GameCanvas(level: 1); //this is just for init
+  GameCanvas gameCanvas = GameCanvas(level: 0); //this is just for init
 
   GameStateVariables({required this.hisScore, required this.myScore, required this.isMyTurn}) {
     int level = gameLevelFinder();
     gameCanvas = GameCanvas(level: level);
+    print(
+        "the level is $level no of x points is ${gameCanvas.numOfXPoints} and no of y points is ${gameCanvas.numOfYPoints}");
   }
 
   int gameLevelFinder() {
@@ -109,13 +46,10 @@ class GameStateVariables {
   }
 }
 
-dynamic gameStateVariables;
 //creating an instance of the class
 
 class PlayWithAi extends StatefulWidget {
-  PlayWithAi({Key? key}) : super(key: key) {
-    gameStateVariables = GameStateVariables(hisScore: 0, myScore: 0, isMyTurn: true);
-  }
+  PlayWithAi({Key? key}) : super(key: key) {}
 
   @override
   State<PlayWithAi> createState() => _PlayWithAiState();
@@ -123,6 +57,9 @@ class PlayWithAi extends StatefulWidget {
 
 class _PlayWithAiState extends State<PlayWithAi> {
   //lets override the back button to make sure that user doesn't leave the game accidently
+
+  var newLineOffset = List<Offset>.filled(3, Offset(0, 0));
+  bool isLineCreated = false;
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -169,7 +106,75 @@ class _PlayWithAiState extends State<PlayWithAi> {
           child: Column(
             children: [
               PlayersBox(),
-              //create a test button to swritch turns and increment the scores
+              //creating a container with rounded borders that will contain the stack
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  //its just a container with rounded borders and a little horizontal padding
+                  height: 600,
+                  width: 400,
+
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.onPrimaryContainer.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+
+                  child: Stack(
+                    children: [
+                      //the first widget of the stack is the gridview for the allPoints
+                      Container(
+                        height: 600,
+                        color: Colors.red.withOpacity(0),
+                        child: GridView.count(
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          crossAxisCount: gameStateVariables.gameCanvas.numOfXPoints,
+                          children: List.generate(allPoints.length, (index) {
+                            return GridView.count(
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              crossAxisCount: gameStateVariables.gameCanvas.numOfXPoints,
+                              physics: NeverScrollableScrollPhysics(), // Disable scrolling
+                              children: List.generate(allPoints.length, (index) {
+                                return GestureDetector(
+                                  onPanStart: (details) {
+                                    setState(() {
+                                      newLineOffset[0] = details.globalPosition;
+                                      allPoints[index].isSelected = true;
+                                      print('You started at point: ${allPoints[index]}');
+                                    });
+                                  },
+                                  onPanUpdate: (details) {
+                                    setState(() {
+                                      newLineOffset[1] = details.globalPosition;
+                                    });
+                                  },
+                                  onPanEnd: (details) {
+                                    setState(() {
+                                      // Check if the line drawn is valid or not.
+                                      // The offsetAnalyzer function should return null for valid lines.
+                                      if (offsetAnalyzer(
+                                              newLineOffset[0], newLineOffset[1], allPoints[index] as Points) ==
+                                          null) {
+                                        print('Invalid Line');
+                                        // Make the point unselected
+                                        allPoints[index].isSelected = false;
+                                      }
+                                    });
+                                  },
+                                  child: PointUi(
+                                    allPoints[index],
+                                  ),
+                                );
+                              }),
+                            );
+                          }),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
             ],
           ),
         ),
